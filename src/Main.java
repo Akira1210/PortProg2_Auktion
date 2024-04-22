@@ -10,6 +10,7 @@ public class Main {
     static int numAuctioneers;
     static int numBidders;
     static int numAuctions;
+    static ArrayList prodUsed= new ArrayList<>();
 
     private static void HandleInputMismatchException(InputMismatchException e) {
         System.out.println(e + ": Eingabe muss eine Ganzzahl sein");
@@ -17,28 +18,25 @@ public class Main {
     }
 
     private static void setProd() throws FileNotFoundException, NoSuchElementException {
-        File file = new File("/Users/jonat/source/Java/PortProg2_Auktion/src/Products.txt");
+        File file = new File("src/Products.txt");
         Scanner prodfile = new Scanner(file);
-        int switchOption = 0;
 
         try {
             while (prodfile.hasNext()) {
                 prodfile.nextLine();
                 var name = prodfile.next(); // Datei besteht aus: Name des Produkts
                 var type = prodfile.next(); // Produkttyp
-                var price = prodfile.next(); // Startpreis
+                var price = prodfile.next();// Startpreis
                 var step = prodfile.next(); // Preisschritte
-                var end = prodfile.next(); // Mindestpreis
-                System.out.println(name); // Produkte werden mit '-' voneinander getrennt
-                System.out.println(type);
-                System.out.println(price);
-                System.out.println(step);
-                System.out.println(end);
+                var end = prodfile.next();  // Mindestpreis
+                                            // Produkte werden mit '-' voneinander getrennt
                 Products t = new Products(name, type, Double.parseDouble(price), Integer.parseInt(step), Double.parseDouble(end));
                 prodfile.nextLine();
+
             }
         } catch (NoSuchElementException e) {
             System.out.println("Alle Produkte hinzugefügt");
+            prodfile.close();
         }
     }
 
@@ -93,14 +91,30 @@ public class Main {
     }
 }
 
-class Auctioneers {
+class Auctioneers extends Thread {
     private int patience;
     private String name;
+    public Products currentProd;
 
     public Auctioneers(int patience, String name) {
         this.patience = patience;
         this.name = name;
+        Random rand = new Random();
+        while (this.currentProd == null) {
+        int rnum = rand.nextInt(0,Products.ProdList.size());
+        if (!Main.prodUsed.contains(rnum)) {
+        this.currentProd = Products.ProdList.get(rnum);
+        Main.prodUsed.add(rnum);}
+        
+        Thread t = new Thread(this);
+        t.start();
+        }
     }
+    @Override
+    public void run() {
+
+    }
+
 }
 
 class Bidders {
@@ -161,16 +175,40 @@ class Bidders {
 
 }
 
-class RunAuction {
-    private int numAc;
+class RunAuction extends Thread{
 
     public RunAuction(int num) {
-        this.numAc = num;
+    }
+
+    //Thread tAuctioneer = new Thread();
+    public void CreateThreads() {
+    for (int i=0; i<Products.getProdListSize();i++) {
+        //Thread tBid = new Thread(new Bidders){
+        //};
+
+    }
+}
+
+    @Override
+    public void run() {
+        throw new UnsupportedOperationException("Unimplemented method 'run'");
+    }
+
+    public double BidderDecision(Bidders b, Products p) {
+        Random rand = new Random();
+        double Decision=0;
+        int takesAction = 0;
+        takesAction = rand.nextInt(0,100);
+        if (takesAction>60) {
+        if(b.getInterests().equals(p.getItemType())) {Decision=+100;}
+        Decision=+ b.getMoney()*(1/Decision)-p.getItemPrice();}
+        return Decision;
+
     }
 
 }
 
-class Create {
+class Create{
     public static ArrayList<Bidders> ListBidders = new ArrayList<>();
     public static ArrayList<Auctioneers> ListAuctioneers = new ArrayList<>();
     public static ArrayList<String> ListIntersts = new ArrayList<>();
@@ -267,5 +305,11 @@ class Products {
     public void setItemEndPrice(Double ItemEndPrice) {
         this.ItemEndPrice = ItemEndPrice;
     }
+
+    public static int getProdListSize(){
+        return ProdList.size();
+    }
+
+
 
 }
