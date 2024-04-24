@@ -11,6 +11,7 @@ public class Products {
     private Double ItemPrice;
     private int ItemSteps;
     private Double ItemEndPrice;
+    private boolean ItemBought;
     public static ArrayList<Products> ProdList = new ArrayList<>();
 /**
  * 
@@ -82,4 +83,13 @@ public class Products {
     public static int getProdListSize(){
         return ProdList.size();
     }
+    public boolean getItemBought(){
+        return this.ItemBought;
+    }
+
+    public void setItemBought(boolean ItemBought) {
+        this.ItemBought = ItemBought;
+    }
+
 }
+

@@ -29,20 +29,20 @@ public class Bidders extends Thread {
 
         @Override
         /**
-         * Ruft in regelmäßigen Abständen Logik der Bieter während der AUktion auf
+         * Ruft in regelmäßigen Abständen Logik der Bieter während der Auktion auf
          */
-        public void run() {
-            while(!Auctioneers.bought[this.getAttend()]) {
+        public synchronized void run() {
+            while(!Products.ProdList.get(this.getAttend()).getItemBought()) {
                 try {
                     Thread.sleep(200);
-                    if (Auctioneers.bought[this.getAttend()]) {
+                    if (Products.ProdList.get(this.getAttend()).getItemBought()) {
                         break;}
                 } catch (InterruptedException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
                 if (BidderDecision(this, Products.ProdList.get(Main.prodUsed.get(this.getAttend())))) {
-                    Auctioneers.bought[this.getAttend()] = true;
+                    Products.ProdList.get(Main.prodUsed.get(this.getAttend())).setItemBought(true);
                     String s = Thread.currentThread().getName()+ " hat " + Products.ProdList.get(Main.prodUsed.get(this.getAttend())).getItemName() +" bei Auktion " + (this.getAttend()+1) + " für " + Products.ProdList.get(Main.prodUsed.get(this.getAttend())).getItemPrice()+ " € gekauft.";
                     System.out.println(s);
                     Main.resultAuc.add(s);
@@ -61,7 +61,7 @@ public class Bidders extends Thread {
      * @param p Produkt, für welches sich der Bieter interessiert
      * @return Entscheidung des Bieters, true wenn Angebot akzeptiert
      */
-        public boolean BidderDecision(Bidders b, Products p) {
+        public synchronized boolean BidderDecision(Bidders b, Products p) {
             Random rand = new Random();
             double Decision=0;
             int takesAction = 0;

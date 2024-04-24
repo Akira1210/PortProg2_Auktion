@@ -11,7 +11,6 @@ public class Auctioneers extends Thread {
         public Products currentProd;
         private int currentProdId;
         public ArrayList<Thread> tAucList = new ArrayList<>();
-        public static boolean[] bought = new boolean[Main.numAuctions];
     
     /**
      * 
@@ -42,10 +41,10 @@ public class Auctioneers extends Thread {
          */
         public synchronized void run() {
             System.out.println("Von "+ Thread.currentThread().getName() + " versteigert wird: "+ this.currentProd.getItemName() + ". Der Startpreis beträgt: " + this.currentProd.getItemPrice()+" €");
-            while (!Auctioneers.bought[this.currentProdId]) {
+            while (!this.currentProd.getItemBought()) {
                 try {
                     sleep(this.patience);
-                    if (Auctioneers.bought[this.currentProdId]) {
+                    if (this.currentProd.getItemBought()) {
                         break;
                     }
                 } catch (InterruptedException e) {
@@ -55,7 +54,7 @@ public class Auctioneers extends Thread {
                 this.currentProd.setItemPrice(this.currentProd.getItemPrice()-this.currentProd.getItemSteps());
             System.out.println("Der Preis für "+this.currentProd.getItemName()+" liegt nun bei "+this.currentProd.getItemPrice()+" €");}
                 else {System.out.println("Mindestpreis unterschritten. Produkt "+this.currentProd.getItemName()+" nicht verkauft.");
-                Auctioneers.bought[this.currentProdId] = true;
+                this.currentProd.setItemBought(true);
                 nextAuction(this);
                 return;
             }
@@ -72,24 +71,51 @@ public class Auctioneers extends Thread {
      * erhält hier der Auktionator eines neues Produkt zum Verkauf
      */
         private void nextAuction(Auctioneers a) {
-            this.interrupt();
             for (int i=0; i<Main.numAuctions;i++) {
-                if (bought[i] == false) {
+                if (Products.ProdList.get(i).getItemBought() == false) {
     
                     // this.currentProd =;
                     // a.run();
 
                 }
-                else {
-                    for(boolean b : bought)
-                    if (b) {
+                boolean allAuctionsDone = true;
+                for (Products p : Products.ProdList) {
+                    if (!p.getItemBought()) {
+                        allAuctionsDone = false;
+                    }
+                if (allAuctionsDone) {
+                    endReport();
+                }
+            }
+                // else {
+                //     for(boolean b : bought)
+                //     if (b) {
 
                 //     for (String res : Main.resultAuc) {
                 //     System.out.println(res);
                 // }
-                }
-            }
+                // }
+            // }
         }
     
+    }
+    public void endReport() {
+        ArrayList<String> res = new ArrayList<>();
+        res.add("------------------------------------------------");
+        res.add("Alle Auktionen beendet. Es wurden " + Main.numAuctions + " durchgeführt.");
+        res.add("------------------------------------------------");
+        int i = 0;
+        double u = 0.0;
+        for (Products p : Products.ProdList) {
+            if (p.getItemBought()) {
+                i++;
+                u=+ p.getItemPrice();
+            }
+        }
+        res.add("Es wurden "+i+" Produkte verkauft und einen Umsatz von "+u+" € erzielt.");
+        res.add("Dabei wurde bei einer Provision von 10% für die Auktionatoren insgesamt ein Verdienst von " + (u*0.1) + " € erzielt.");
+        System.out.println(res);
+
+
     }
 }
