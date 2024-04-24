@@ -8,6 +8,6 @@ CollectorsItem
 Sportwagen
 Car
 28000
-22000
 1000
+22000
 -
