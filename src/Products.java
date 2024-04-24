@@ -1,5 +1,9 @@
 import java.util.ArrayList;
 
+/** Klasse für Produkte
+ * Enthält alle nötigen Parameter für Produkte, wie Name, Produkttyp, Preis, Preissenkungsschritte und Mindestpreis
+ * Produkte werden extern mit dieser Klasse mittels Products.txt erstellt
+ */
 public class Products {
 
     private String ItemName;
@@ -8,7 +12,14 @@ public class Products {
     private int ItemSteps;
     private Double ItemEndPrice;
     public static ArrayList<Products> ProdList = new ArrayList<>();
-
+/**
+ * 
+ * @param ItemName Name des Produkts
+ * @param ItemType Art des Produkts, z.B. Sammlerstück, Auto, Geschichtsgegenstand, usw.
+ * @param ItemPrice Preis des Produkts, wird während der Auktion bei Preissenkungen angepasst
+ * @param ItemSteps Gibt die Preissenkungsschritte an
+ * @param ItemEndPrice Gibt den Mindestpreis an
+ */
     public Products(String ItemName, String ItemType, Double ItemPrice, int ItemSteps, Double ItemEndPrice) {
         this.ItemName = ItemName;
         this.ItemType = ItemType;
@@ -71,7 +82,4 @@ public class Products {
     public static int getProdListSize(){
         return ProdList.size();
     }
-
-
-
 }

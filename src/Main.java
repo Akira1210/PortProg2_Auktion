@@ -9,23 +9,37 @@ import java.util.Scanner;
 
 /**
  * TODO: JavaDocs schreiben
- * TODO: Adressierung von laufenden Auktionen und deren Methoden fixen
  * TODO: evtl. nach abgeschlossenen Auktion, verbelibende Bieter auf noch laufende Auktionen verteilen
- * TODO: Verkauf des selben Produkts an mehrere Bieter fixen
- * TODO: Code-Cleanup und Auslagerung auf mehrere .java Files und Packages
- * TODO implement AuctionID !!!!!
+ * TODO: Code-Cleanup und Auslagerung auf mehrere Packages
  */
 public class Main {
     static int numAuctioneers;
     static int numBidders;
     static int numAuctions;
     static ArrayList<Integer> prodUsed= new ArrayList<>();
+    static ArrayList<String> resultAuc = new ArrayList<>();
 
+    /**
+     * Behandelt falsche Eingaben, wenn Anzahl von Auktion, Auktionatoren und Bietern eingegeben werden
+     * @param e Variable für hier behandelte Ausnahme
+     */
     private static void HandleInputMismatchException(InputMismatchException e) {
         System.out.println(e + ": Eingabe muss eine Ganzzahl sein");
         System.exit(-1);
     }
+/**
+ * Behandelt negative Eingaben, wenn Anzahl von Auktion, Auktionatoren und Bietern eingegeben werden
+ */
+    private static void NumberFormatException() {
+        System.out.println("Eingabe muss eine positive Ganzzahl sein");
+        System.exit(-1);
+    }
 
+    /**
+     * Liest Produktdaten aus 'Products.txt'
+     * @throws FileNotFoundException wird ausgelöst, wenn 'Products.txt' nicht existiert
+     * @throws NoSuchElementException wird ausgelöst, wenn  versucht wird eine nicht vorhandene Zeile in 'Products.txt' zu lesen. Behandlung schließt Einlesung von Produkten ab.
+     */
     private static void setProd() throws FileNotFoundException, NoSuchElementException {
         File file = new File("src/Products.txt");
         Scanner prodfile = new Scanner(file);
@@ -33,11 +47,11 @@ public class Main {
         try {
             while (prodfile.hasNext()) {
                 prodfile.nextLine();
-                var name = prodfile.next(); // Datei besteht aus: Name des Produkts
-                var type = prodfile.next(); // Produkttyp
-                var price = prodfile.next();// Startpreis
-                var step = prodfile.next(); // Preisschritte
-                var end = prodfile.next();  // Mindestpreis
+                String name = prodfile.next(); // Datei besteht aus: Name des Produkts
+                String type = prodfile.next(); // Produkttyp
+                String price = prodfile.next();// Startpreis
+                String step = prodfile.next(); // Preisschritte
+                String end = prodfile.next();  // Mindestpreis
                                             // Produkte werden mit '-' voneinander getrennt
                 Products t = new Products(name, type, Double.parseDouble(price), Integer.parseInt(step), Double.parseDouble(end));
                 prodfile.nextLine();
@@ -49,7 +63,13 @@ public class Main {
         }
     }
 
-    public static void main(String[] args) throws InputMismatchException {
+    /**
+     * Startet Auktions-Simulation
+     * Erfragt Eingaben zur Anzahl von Auktionen, Auktionatoren und Bieter vom Nutzer
+     * @param args NotImplemented
+     * @throws InputMismatchException wird ausgelöst, wenn Eingaben nicht ausschließlich positive Ganzahlen sind
+     */
+    public static void main(String[] args) throws InputMismatchException, NumberFormatException {
         Create.setListInterests();
         try {
             setProd();
@@ -68,6 +88,7 @@ public class Main {
                 " Es werden nur " + Products.getProdListSize() + " Auktionen durchgeführt.");
                 numAuctions = Products.getProdListSize();
             }
+            if (numAuctions<1) {NumberFormatException();}
         } catch (InputMismatchException eAu) {
             HandleInputMismatchException(eAu);
     
@@ -76,6 +97,15 @@ public class Main {
         System.out.println("Bitte geben Sie die Anzahl der Auktionatoren an:");
         try {
             numAuctioneers = input.nextInt();
+            if (numAuctions<numAuctioneers) {
+                String t="";
+                String s="";
+                if (numAuctions==1) {t = " Auktionator ";s=" wird ";}
+                if (numAuctions>1) {t = " Auktionatoren ";s=" werden ";}
+                System.out.println("(!Hinweis!) Es nehmen mehr Auktionatoren teil, als Auktionen durchgeführt werden. Es" + s + "nur "+numAuctions+ t + "eine Auktion durchführen.");
+                numAuctioneers=numAuctions;
+                if (numAuctioneers<1) {NumberFormatException();}
+            }
         } catch (InputMismatchException eA) {
             HandleInputMismatchException(eA);
         }
@@ -83,35 +113,35 @@ public class Main {
         System.out.println("Bitte geben Sie die Anzahl der Bieter an:");
         try {
             numBidders = input.nextInt();
+            if (numBidders<1) {NumberFormatException();}
         } catch (InputMismatchException eB) {
             HandleInputMismatchException(eB);
         }
 
 
 
-
         input.close();
-        
-
-
-
         Create.CreateNum(1,numAuctioneers);
         Create.CreateNum(0, numBidders);
         
-        if (Products.ProdList.size()<numAuctioneers) {
-            System.out.println("(!Hinweis!) Es stehen weniger Produkte als Auktionatoren zur Verfügung. Nicht jeder Auktionator wird etwas verkaufen können.");
-        }
-        BiddersToAuction();
 
-         //Bieter werden Auktionen per Zufall zugeordnet !!!! WENN AUKTIONATOREN>PRODUKTE, DANN WIRD BIDDERSTOAUCTION NICHT AUSGEFÜHRT
+        BiddersToAuction();
+        for (String res : resultAuc) {
+            System.out.println(res);
+        }
+
 
     }
+
+    /**
+     * Teilt zufällig Bieter auf Auktionen auf
+     */
     private static void BiddersToAuction(){
         Random rand = new Random();
         for (int i=0; i< numBidders; i++) {
-            int randRes= rand.nextInt(0,numAuctions);
+            int randRes= rand.nextInt(0,numAuctioneers);
             Create.ListBidders.get(i).setAttend(randRes);
-            System.out.println(Create.ListBidders.get(i).getName()+" nimmt an Auktion " + (Create.ListBidders.get(i).getAttend()+1)+" teil.");
+            System.out.println("Bidder "+(i+1)+" nimmt an Auktion " + (Create.ListBidders.get(i).getAttend()+1)+" teil, hat besonderes Interesse an " + Create.ListBidders.get(i).getInterests()+" und hat ein Budget von "+ Create.ListBidders.get(i).getMoney()+" €.");
 
         }
 
