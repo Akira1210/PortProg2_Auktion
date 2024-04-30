@@ -12,6 +12,7 @@ public class Products {
     private int ItemSteps;
     private Double ItemEndPrice;
     private boolean ItemBought;
+    private boolean ItemBelowMin;
     public static ArrayList<Products> ProdList = new ArrayList<>();
 /**
  * 
@@ -27,6 +28,7 @@ public class Products {
         this.ItemPrice = ItemPrice;
         this.ItemSteps = ItemSteps;
         this.ItemEndPrice = ItemEndPrice;
+        this.ItemBelowMin = false;
         ProdList.add(this);}
 
     @Override
@@ -89,6 +91,14 @@ public class Products {
 
     public void setItemBought(boolean ItemBought) {
         this.ItemBought = ItemBought;
+    }
+
+    public boolean getItemBelowMin() {
+        return this.ItemBelowMin;
+    }
+
+    public void setItemBelowMin(boolean ItemBelowMin) {
+        this.ItemBelowMin = ItemBelowMin;
     }
 
 }

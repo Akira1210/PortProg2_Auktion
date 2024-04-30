@@ -1,4 +1,6 @@
 import java.util.Random;
+
+import javax.management.Descriptor;
 /**
  * Bieter Klasse
  * Enthält die Entscheidungslogik zum Kauf für die Auktion
@@ -31,29 +33,33 @@ public class Bidders extends Thread {
         /**
          * Ruft in regelmäßigen Abständen Logik der Bieter während der Auktion auf
          */
-        public synchronized void run() {
-            while(!Products.ProdList.get(this.getAttend()).getItemBought()) {
-                try {
-                    Thread.sleep(200);
-                    if (Products.ProdList.get(this.getAttend()).getItemBought()) {
+
+         //!!! this.getAttend ersetzten, ruft falsche Produkte ab, Attend ist AuktionNr, allerdings mit zufälligem Produkt
+        public void run() {
+            while(!Products.ProdList.get(this.getAttend()).getItemBought() || !Products.ProdList.get(this.getAttend()).getItemBelowMin() ) {
+                // try {
+                    //Thread.sleep(50);
+                    if (Products.ProdList.get(this.getAttend()).getItemBought() || Products.ProdList.get(this.getAttend()).getItemBelowMin()) {
                         break;}
-                } catch (InterruptedException e) {
+                // } catch (InterruptedException e) {
                     // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
+                //     e.printStackTrace();
+                // }
                 if (BidderDecision(this, Products.ProdList.get(Main.prodUsed.get(this.getAttend())))) {
-                    Products.ProdList.get(Main.prodUsed.get(this.getAttend())).setItemBought(true);
+                    synchronized (Products.ProdList.get(Main.prodUsed.get(this.getAttend()))) {  //Verhindert Verkauf eines Produkts an mehrere Bieter
+                        if (Products.ProdList.get(Main.prodUsed.get(this.getAttend())).getItemBought() || Products.ProdList.get(Main.prodUsed.get(this.getAttend())).getItemBelowMin() == true) {
+                            break;
+                        }
+                        Products.ProdList.get(Main.prodUsed.get(this.getAttend())).setItemBought(true);
+                    };
                     String s = Thread.currentThread().getName()+ " hat " + Products.ProdList.get(Main.prodUsed.get(this.getAttend())).getItemName() +" bei Auktion " + (this.getAttend()+1) + " für " + Products.ProdList.get(Main.prodUsed.get(this.getAttend())).getItemPrice()+ " € gekauft.";
                     System.out.println(s);
                     Main.resultAuc.add(s);
-                    Thread.interrupted();
-                    return;
+                    break;
                 }
-                Thread.interrupted();
-                    return;
-    
-    
             }
+            Thread.interrupted();
+            return;
         }
     /**
      * Methode die regelmäßig überprüft, ob der Bieter sich für den Kauf entscheidet
@@ -61,17 +67,19 @@ public class Bidders extends Thread {
      * @param p Produkt, für welches sich der Bieter interessiert
      * @return Entscheidung des Bieters, true wenn Angebot akzeptiert
      */
-        public synchronized boolean BidderDecision(Bidders b, Products p) {
+        public boolean BidderDecision(Bidders b, Products p) {
             Random rand = new Random();
             double Decision=0;
             int takesAction = 0;
             takesAction =+ rand.nextInt(0,100);
 
-            if (takesAction>90) {
-            if(b.getInterests().equals(p.getItemType())) {Decision=100;}
-            Decision=+ b.getMoney()*(5/Decision)-p.getItemPrice();}
+            if (takesAction>50) {
+            if(b.getInterests().equals(p.getItemType())) {Decision+=100;}
+            if (b.getMoney()/p.getItemPrice() >= 2) {Decision+=100;}
+            Decision += rand.nextInt(0, 100);
             if (b.getMoney()<p.getItemPrice()) {Decision=0;}
-            if (Decision>200) {return true;}
+            if (Decision>=210) {return true; }
+            }
             return false;
     
         }
