@@ -6,12 +6,7 @@ import java.util.NoSuchElementException;
 import java.util.Random;
 import java.util.Scanner;
 
-/**
- * TODO: JavaDocs schreiben
- * TODO: evtl. nach abgeschlossenen Auktion, verbelibende Bieter auf noch laufende Auktionen verteilen
- * TODO: Code-Cleanup und Auslagerung auf mehrere Packages
- * TODO: Mehrere Bieter können gleiches Produkt kaufen
- */
+
 public class Main {
     static int numAuctioneers;
     static int numBidders;

@@ -28,50 +28,29 @@ public class Bidders extends Thread {
         }
 
         @Override
-        /**
-         * Ruft in regelmäßigen Abständen Logik der Bieter während der Auktion auf
-         */
-        public synchronized void run() {
-            while(!Products.ProdList.get(this.getAttend()).getItemBought()) {
-                try {
-                    Thread.sleep(200);
-                    if (Products.ProdList.get(this.getAttend()).getItemBought()) {
-                        break;}
-                } catch (InterruptedException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-                if (BidderDecision(this, Products.ProdList.get(Main.prodUsed.get(this.getAttend())))) {
-                    Products.ProdList.get(Main.prodUsed.get(this.getAttend())).setItemBought(true);
-                    String s = Thread.currentThread().getName()+ " hat " + Products.ProdList.get(Main.prodUsed.get(this.getAttend())).getItemName() +" bei Auktion " + (this.getAttend()+1) + " für " + Products.ProdList.get(Main.prodUsed.get(this.getAttend())).getItemPrice()+ " € gekauft.";
-                    System.out.println(s);
-                    Main.resultAuc.add(s);
-                    Thread.interrupted();
-                    return;
-                }
-                Thread.interrupted();
-                    return;
-    
-    
-            }
+        public void run() {
+                
         }
+
     /**
      * Methode die regelmäßig überprüft, ob der Bieter sich für den Kauf entscheidet
      * @param b dieser Bieter
      * @param p Produkt, für welches sich der Bieter interessiert
      * @return Entscheidung des Bieters, true wenn Angebot akzeptiert
      */
-        public synchronized boolean BidderDecision(Bidders b, Products p) {
+        public boolean BidderDecision(Bidders b, Products p) {
             Random rand = new Random();
             double Decision=0;
             int takesAction = 0;
             takesAction =+ rand.nextInt(0,100);
 
-            if (takesAction>90) {
-            if(b.getInterests().equals(p.getItemType())) {Decision=100;}
-            Decision=+ b.getMoney()*(5/Decision)-p.getItemPrice();}
+            if (takesAction>50) {
+            if(b.getInterests().equals(p.getItemType())) {Decision+=100;}
+            if (b.getMoney()/p.getItemPrice() >= 2) {Decision+=100;}
+            Decision += rand.nextInt(0, 100);
             if (b.getMoney()<p.getItemPrice()) {Decision=0;}
-            if (Decision>200) {return true;}
+            if (Decision>=210) {return true; }
+            }
             return false;
     
         }
@@ -106,17 +85,6 @@ public class Bidders extends Thread {
     
         public void setMoney(double money) {
             this.money = money;
-        }
-    
-    
-        @Override
-        public String toString() {
-            return "{" +
-                    " name='" + getName() + "'" +
-                    ", aggr='" + getAggr() + "'" +
-                    ", interests='" + getInterests() + "'" +
-                    ", money='" + getMoney() + "'" +
-                    "}";
         }
     
     }

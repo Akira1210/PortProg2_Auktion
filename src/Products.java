@@ -12,6 +12,7 @@ public class Products {
     private int ItemSteps;
     private Double ItemEndPrice;
     private boolean ItemBought;
+    private boolean ItemBelowMin;
     public static ArrayList<Products> ProdList = new ArrayList<>();
 /**
  * 
@@ -27,17 +28,8 @@ public class Products {
         this.ItemPrice = ItemPrice;
         this.ItemSteps = ItemSteps;
         this.ItemEndPrice = ItemEndPrice;
-        ProdList.add(this);}
-
-    @Override
-    public String toString() {
-        return "{" +
-            " ItemName='" + getItemName() + "'" +
-            ", ItemType='" + getItemType() + "'" +
-            ", ItemPrice='" + getItemPrice() + "'" +
-            ", ItemSteps='" + getItemSteps() + "'" +
-            ", ItemEndPrice='" + getItemEndPrice() + "'" +
-            "}";
+        this.ItemBelowMin = false;
+        ProdList.add(this);
     }
 
     public String getItemName() {
@@ -89,6 +81,14 @@ public class Products {
 
     public void setItemBought(boolean ItemBought) {
         this.ItemBought = ItemBought;
+    }
+
+    public boolean getItemBelowMin() {
+        return this.ItemBelowMin;
+    }
+
+    public void setItemBelowMin(boolean ItemBelowMin) {
+        this.ItemBelowMin = ItemBelowMin;
     }
 
 }

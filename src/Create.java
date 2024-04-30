@@ -50,7 +50,7 @@ public class Create {
     
             }
             if (type == 1) {
-                Auctioneers t = new Auctioneers(rand.nextInt(1000, 7000), "Auctioneer: " + (thisnum + 1));
+                Auctioneers t = new Auctioneers(rand.nextInt(2000, 5000), "Auctioneer: " + (thisnum + 1));
                 ListAuctioneers.add(t);
     
             }
