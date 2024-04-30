@@ -26,10 +26,15 @@ public class Create {
          */
         public static void setListInterests(){
             ListInterests.add("CollectorsItem");
-            ListInterests.add("Car");
-            ListInterests.add("UniqueItem");
+            ListInterests.add("SportsItem");
+            ListInterests.add("VintageItem");
             ListInterests.add("HistoryItem");
-            ListInterests.add("RiskItem"); //Wert unbekannt, bsp. wegen Zustand oder unbekannte Seltenheit
+            ListInterests.add("Electronics");
+            ListInterests.add("Fashion");
+            ListInterests.add("Art");
+            ListInterests.add("Book");
+            ListInterests.add("Jewelry");
+            ListInterests.add("Furniture");
             ListInterests.add("None");
         }
     /**
