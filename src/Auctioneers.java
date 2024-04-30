@@ -11,11 +11,9 @@ import java.util.Random;
 public class Auctioneers extends Thread {
     private int patience;
     private String name;
-    public Products currentProd;
-    private int currentProdId;
+    private Products currentProd;
     public ArrayList<Thread> tAucList = new ArrayList<>();
     private boolean reportGenerated = false;
-    private int auctionNo;
 
     /**
      * 
@@ -30,12 +28,9 @@ public class Auctioneers extends Thread {
         Random rand = new Random();
         while (this.currentProd == null) {
             int rnum = rand.nextInt(0, Products.ProdList.size());
-            if (!Main.prodUsed.contains(rnum)) {
+            if (!Products.ProdList.get(rnum).getItemUsed()) {
                 this.currentProd = Products.ProdList.get(rnum);
-                
-                currentProdId = rnum-1;
-                Main.prodUsed.add(rnum);
-                auctionNo = Main.prodUsed.size();
+                Products.ProdList.get(rnum).setItemUsed(true);
 
                 Thread t = new Thread(this, name);
                 tAucList.add(t);
@@ -76,12 +71,10 @@ public class Auctioneers extends Thread {
         res.add("Es wurden " + i + " Produkte verkauft und einen Umsatz von " + u + " € erzielt.\n");
         res.add("Dabei wurde bei einer Provision von 10% für die Auktionatoren insgesamt ein Verdienst von " + (u * 0.1)
                 + " € erzielt.");
-        System.out.println(res.toString().replace(",", ""));
-
-        //GETTER AND SETTER
+        System.out.println(res.toString().replace(",", ""));   
     }
 
-
+//GETTER AND SETTER
     public int getPatience() {
         return this.patience;
     }
@@ -96,14 +89,6 @@ public class Auctioneers extends Thread {
 
     public void setCurrentProd(Products currentProd) {
         this.currentProd = currentProd;
-    }
-
-    public int getCurrentProdId() {
-        return this.currentProdId;
-    }
-
-    public void setCurrentProdId(int currentProdId) {
-        this.currentProdId = currentProdId;
     }
 
     public ArrayList<Thread> getTAucList() {
@@ -124,9 +109,5 @@ public class Auctioneers extends Thread {
 
     public void setReportGenerated(boolean reportGenerated) {
         this.reportGenerated = reportGenerated;
-    }
-
-    public int getAuctionNo() {
-        return this.auctionNo;
     }
 }
