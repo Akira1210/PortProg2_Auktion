@@ -29,17 +29,7 @@ public class Products {
         this.ItemSteps = ItemSteps;
         this.ItemEndPrice = ItemEndPrice;
         this.ItemBelowMin = false;
-        ProdList.add(this);}
-
-    @Override
-    public String toString() {
-        return "{" +
-            " ItemName='" + getItemName() + "'" +
-            ", ItemType='" + getItemType() + "'" +
-            ", ItemPrice='" + getItemPrice() + "'" +
-            ", ItemSteps='" + getItemSteps() + "'" +
-            ", ItemEndPrice='" + getItemEndPrice() + "'" +
-            "}";
+        ProdList.add(this);
     }
 
     public String getItemName() {

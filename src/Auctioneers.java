@@ -50,35 +50,6 @@ public class Auctioneers extends Thread {
      * Logik der Auktionatoren während der Auktion
      */
     public synchronized void run() {
-        System.out.println(
-                "Von " + Thread.currentThread().getName() + " versteigert wird: " + this.currentProd.getItemName()
-                        + ". Der Startpreis beträgt: " + this.currentProd.getItemPrice() + " €");
-        while (!this.currentProd.getItemBought()) {
-            try {
-                sleep(this.patience);
-                if (this.currentProd.getItemBought()) {
-                    break;
-                }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            if (this.currentProd.getItemPrice().compareTo(this.currentProd.getItemEndPrice()) > 0) {
-                this.currentProd.setItemPrice(this.currentProd.getItemPrice() - this.currentProd.getItemSteps());
-                System.out.println("Der Preis für " + this.currentProd.getItemName() + " liegt nun bei "
-                        + this.currentProd.getItemPrice() + " €");
-            } 
-            else {
-                System.out.println("Mindestpreis unterschritten. Produkt " + this.currentProd.getItemName() + " nicht verkauft.");
-                this.currentProd.setItemBelowMin(true);
-                Products.ProdList.get(this.currentProdId).setItemBelowMin(true);
-                break;
-            }
-
-        }
-        // this.interrupt();
-        nextAuction(this);
-        Thread.interrupted();
-        return;
 
     }
 
@@ -87,13 +58,6 @@ public class Auctioneers extends Thread {
      * Wenn mehr Auktionen geplant sind, als Auktionatoren zur Verfügung stellen,
      * erhält hier der Auktionator eines neues Produkt zum Verkauf
      */
-    private void nextAuction(Auctioneers a) {
-
-        if (this.getThreadGroup().activeCount() <= 2 && reportGenerated == false) {
-            endReport();
-        }
-
-    }
 
     public void endReport() {
         reportGenerated = true;

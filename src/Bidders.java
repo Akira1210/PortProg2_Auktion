@@ -1,6 +1,4 @@
 import java.util.Random;
-
-import javax.management.Descriptor;
 /**
  * Bieter Klasse
  * Enthält die Entscheidungslogik zum Kauf für die Auktion
@@ -30,37 +28,10 @@ public class Bidders extends Thread {
         }
 
         @Override
-        /**
-         * Ruft in regelmäßigen Abständen Logik der Bieter während der Auktion auf
-         */
-
-         //!!! this.getAttend ersetzten, ruft falsche Produkte ab, Attend ist AuktionNr, allerdings mit zufälligem Produkt
         public void run() {
-            while(!Products.ProdList.get(this.getAttend()).getItemBought() || !Products.ProdList.get(this.getAttend()).getItemBelowMin() ) {
-                // try {
-                    //Thread.sleep(50);
-                    if (Products.ProdList.get(this.getAttend()).getItemBought() || Products.ProdList.get(this.getAttend()).getItemBelowMin()) {
-                        break;}
-                // } catch (InterruptedException e) {
-                    // TODO Auto-generated catch block
-                //     e.printStackTrace();
-                // }
-                if (BidderDecision(this, Products.ProdList.get(Main.prodUsed.get(this.getAttend())))) {
-                    synchronized (Products.ProdList.get(Main.prodUsed.get(this.getAttend()))) {  //Verhindert Verkauf eines Produkts an mehrere Bieter
-                        if (Products.ProdList.get(Main.prodUsed.get(this.getAttend())).getItemBought() || Products.ProdList.get(Main.prodUsed.get(this.getAttend())).getItemBelowMin() == true) {
-                            break;
-                        }
-                        Products.ProdList.get(Main.prodUsed.get(this.getAttend())).setItemBought(true);
-                    };
-                    String s = Thread.currentThread().getName()+ " hat " + Products.ProdList.get(Main.prodUsed.get(this.getAttend())).getItemName() +" bei Auktion " + (this.getAttend()+1) + " für " + Products.ProdList.get(Main.prodUsed.get(this.getAttend())).getItemPrice()+ " € gekauft.";
-                    System.out.println(s);
-                    Main.resultAuc.add(s);
-                    break;
-                }
-            }
-            Thread.interrupted();
-            return;
+                
         }
+
     /**
      * Methode die regelmäßig überprüft, ob der Bieter sich für den Kauf entscheidet
      * @param b dieser Bieter
@@ -114,17 +85,6 @@ public class Bidders extends Thread {
     
         public void setMoney(double money) {
             this.money = money;
-        }
-    
-    
-        @Override
-        public String toString() {
-            return "{" +
-                    " name='" + getName() + "'" +
-                    ", aggr='" + getAggr() + "'" +
-                    ", interests='" + getInterests() + "'" +
-                    ", money='" + getMoney() + "'" +
-                    "}";
         }
     
     }
