@@ -11,8 +11,10 @@ public class Products {
     private Double ItemPrice;
     private int ItemSteps;
     private Double ItemEndPrice;
-    private boolean ItemBought;
-    private boolean ItemBelowMin;
+
+    private boolean ItemBought; //Gekauft?
+    private boolean ItemBelowMin; //Nicht verkauf, da Mindestpreis?
+    private boolean ItemUsed; //Bereits teil einer Auktion?
     public static ArrayList<Products> ProdList = new ArrayList<>();
 /**
  * 
@@ -89,6 +91,14 @@ public class Products {
 
     public void setItemBelowMin(boolean ItemBelowMin) {
         this.ItemBelowMin = ItemBelowMin;
+    }
+
+    public boolean getItemUsed() {
+        return this.ItemUsed;
+    }
+
+    public void setItemUsed(boolean ItemUsed) {
+        this.ItemUsed = ItemUsed;
     }
 
 }

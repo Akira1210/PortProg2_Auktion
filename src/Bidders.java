@@ -9,7 +9,7 @@ public class Bidders extends Thread {
         private String interests;
         private double money;
         private String name;
-        public int attend; //Zuorndnung, an welcher Auktion der Bieter teilnimmt 
+        private int attend; //Zuorndnung, an welcher Auktion der Bieter teilnimmt 
     
         /**
          * 
