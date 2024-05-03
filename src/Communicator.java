@@ -1,27 +1,38 @@
 /**
  * Klasse für die Kommunikation zwischen Bieter und Auktionatoren
  */
-import java.util.*;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
+import java.util.ArrayList;
+import java.util.List;
 
-class Communicator {
-    private BlockingQueue<Message> queue;
+public class Communicator {
+    private List<Bidders> bidders;
+    private List<Auctioneers> auctioneers;
 
     public Communicator() {
-        this.queue = new LinkedBlockingQueue<>();
+        this.bidders = new ArrayList<>();
+        this.auctioneers = new ArrayList<>();
     }
 
-    public void sendMessage(Message message) {
-        this.queue.add(message);
+    public void registerBidder(Bidders bidder) {
+        bidders.add(bidder);
     }
 
-    public Message receiveMessage() {
-        try {
-            return this.queue.take();
-        } catch (InterruptedException e) {
-            return null;
+    public void registerAuctioneer(Auctioneers auctioneer) {
+        auctioneers.add(auctioneer);
+    }
+
+    public void notifyAuctioneer(int numBidders, String bidderName, double bidAmount) {
+        for (Auctioneers auctioneer : auctioneers) {
+            System.out.println("Notification for Auctioneer: " + auctioneer);
+            System.out.println("Number of bidders registered: " + numBidders);
+            System.out.println("Bidder: " + bidderName + " placed a bid of " + bidAmount + " euros.");
+        }
+    }
+
+    public void notifyBidder(Products product, double currentPrice) {
+        for (Bidders bidder : bidders) {
+            System.out.println("Notification for Bidder: " + bidder);
+            System.out.println("Auction details: Product - " + product + ", Current price - " + currentPrice + " euros.");
         }
     }
 }

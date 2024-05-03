@@ -1,86 +1,67 @@
-import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
+public class Auction implements Runnable {
+    private Products product;
+    private double currentPrice;
+    private boolean auctionEnded;
+    private double winningBid;
 
-class Auction implements Runnable {
-    private Products currentProd;
-    private Communicator communicator;
-    private int patience;
-    private ArrayList<Bidders> bidders;
-
-    public Auction(Products currentProd, Communicator communicator) {
-        this.currentProd = currentProd;
-        this.communicator = communicator;
-        this.patience = 5;
-        this.bidders = new ArrayList<>();
+    public Auction(Products product) {
+        this.product = product;
+        this.currentPrice = product.getStartingPrice();
+        this.auctionEnded = false;
     }
+
+
+    public synchronized void bid(double amount) {
+        if (!auctionEnded && amount >= currentPrice) {
+            System.out.println("Bidder " + Thread.currentThread().getName() + " placed a bid of " + amount + " euros on " + product);
+            currentPrice = amount;
+            winningBid = amount; // Set the winning bid to the new bid amount
+            auctionEnded = true;
+            notifyAll(); // Notify all waiting threads that the auction has ended
+        }
+    }
+
 
     @Override
     public void run() {
-        // Notify bidders about the auction
-        Message message = new Message("Auction started", currentProd);
-        communicator.sendMessage(message);
-
-        // Wait for bidders to join
         try {
-            Thread.sleep(1000);
+            // Display initial current price
+            System.out.println("Current price for " + product + ": " + currentPrice + " euros.");
+
+            synchronized (this) {
+                wait(5000); // Wait for 5 seconds before starting decrements
+            }
+
+            while (!auctionEnded && currentPrice > product.getMinimalPrice()) {
+                currentPrice -= product.getDecrementPrice();
+                System.out.println("Current price for " + product + ": " + currentPrice + " euros.");
+                synchronized (this) {
+                    wait(5000); // Wait for 5 seconds before decrementing the price again
+                }
+            }
+
+            if (currentPrice <= product.getMinimalPrice()) {
+                auctionEnded = true;
+                System.out.println("Auction ended. Minimal price reached for " + product + ": " + product.getMinimalPrice() + " euros.");
+            }
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
-        // Start the auction
-        while (currentProd.getItemPrice() > currentProd.getItemEndPrice()) {
-            // Lower the price
-            currentProd.setItemPrice(currentProd.getItemPrice() - 10);
-
-            // Notify bidders about the price update
-            message = new Message("Price updated", currentProd);
-            communicator.sendMessage(message);
-
-            // Wait for a short period
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-
-        // Notify bidders about the auction end
-        message = new Message("Auction ended", currentProd);
-        communicator.sendMessage(message);
     }
 
-    public void addBidder(Bidders bidder) {
-        this.bidders.add(bidder);
+    public boolean isAuctionEnded() {
+        return auctionEnded;
     }
 
-    public Products getCurrentProd() {
-        return currentProd;
+    public double getCurrentPrice() {
+        return currentPrice;
+    }
+    public Products getProduct() {
+        return product;
+    }
+    public double getWinningBid() {
+        return winningBid;
     }
 
-    public void setCurrentProd(Products currentProd) {
-        this.currentProd = currentProd;
-    }
-
-    public ArrayList<Bidders> getBidders() {
-        return bidders;
-    }
-
-    public void setBidders(ArrayList<Bidders> bidders) {
-        this.bidders = bidders;
-    }
-
-    public int getPatience() {
-        return patience;
-    }
-
-    public void setPatience(int patience) {
-        this.patience = patience;
-    }
-
-    public Communicator getCommunicator() {
-        return communicator;
-    }
-
-    public void setCommunicator(Communicator communicator) {
-        this.communicator = communicator;
-    }
 }

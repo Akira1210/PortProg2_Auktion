@@ -1,68 +1,27 @@
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class AuctionHouse {
-    private ArrayList<Thread> tAucList;
-    private Communicator communicator;
-    private boolean reportGenerated;
+    private List<Auction> auctions;
 
     public AuctionHouse() {
-        this.tAucList = new ArrayList<>();
-        this.communicator = new Communicator();
-        this.reportGenerated = false;
+        this.auctions = new ArrayList<>();
     }
 
-    public void startAuction(Products currentProd) {
-        Auction auc = new Auction(currentProd, communicator);
-        Thread tAuc = new Thread(auc);
-        tAuc.start();
-        tAucList.add(tAuc);
+    public synchronized void createAuction(Products product) {
+        Auction auction = new Auction(product);
+        auctions.add(auction);
+        Main.setCurrentAuction(auction); // Set the current auction
+        Thread thread = new Thread(auction);
+        thread.start(); // Start the auction in a new thread
     }
 
-    public void endAuction(int prodIndex) {
-        Products p = Products.ProdList.get(prodIndex);
-        p.setItemBought(true);
-        p.setItemUsed(false);
-        p.setItemPrice(p.getItemEndPrice());
+    public synchronized void endAuction(Auction auction) {
+        auctions.remove(auction);
     }
 
-    public void endReport() {
-        reportGenerated = true;
-        ArrayList<String> res = new ArrayList<>();
-        int i = 0;
-        double u = 0.0;
-        for (Products p : Products.ProdList) {
-            if (p.getItemBought()) {
-                i++;
-                u = u + p.getItemPrice();
-            }
-        }
-        System.out.println(res.toString().replace(",", ""));
-    }
-
-    public ArrayList<Thread> gettAucList() {
-        return tAucList;
-    }
-
-    public void settAucList(ArrayList<Thread> tAucList) {
-        this.tAucList = tAucList;
-    }
-
-    public Communicator getCommunicator() {
-        return communicator;
-    }
-
-    public void setCommunicator(Communicator communicator) {
-        this.communicator = communicator;
-    }
-
-    public boolean isReportGenerated() {
-        return reportGenerated;
-    }
-
-    public void setReportGenerated(boolean reportGenerated) {
-        this.reportGenerated = reportGenerated;
+    public List<Auction> getAuctions() {
+        return auctions;
     }
 }
