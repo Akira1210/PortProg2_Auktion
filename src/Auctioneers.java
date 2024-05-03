@@ -16,7 +16,7 @@ public class Auctioneers extends Thread {
     private boolean reportGenerated = false;
 
     /**
-     * 
+     *
      * @param patience Gedult des Auktionators, um so kleiner desto schneller werden
      *                 Preissenkungen vorgenommen
      * @param name     Name des Auktionators. Besteht aus 'Auctioneer ' + Nummer,
@@ -71,10 +71,10 @@ public class Auctioneers extends Thread {
         res.add("Es wurden " + i + " Produkte verkauft und einen Umsatz von " + u + " € erzielt.\n");
         res.add("Dabei wurde bei einer Provision von 10% für die Auktionatoren insgesamt ein Verdienst von " + (u * 0.1)
                 + " € erzielt.");
-        System.out.println(res.toString().replace(",", ""));   
+        System.out.println(res.toString().replace(",", ""));
     }
 
-//GETTER AND SETTER
+    //GETTER AND SETTER
     public int getPatience() {
         return this.patience;
     }
