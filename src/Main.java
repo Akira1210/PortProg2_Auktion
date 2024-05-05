@@ -45,10 +45,10 @@ public class Main {
         Thread auctionThread2 = new Thread(() -> auctioneer2.startAuctions());
 
         // Start auction threads
-        auctionThread1.start();
         auctionThread1.setName("A1");
-        auctionThread2.start();
+        auctionThread1.start();
         auctionThread2.setName("A2");
+        auctionThread2.start();
 
         try {
             auctionThread1.join();
@@ -63,8 +63,8 @@ public class Main {
         Bidders bidder2 = new Bidders(Create.createBidder()); // Bidder with 1000 euros budget and non-aggressive behavior
 
         Thread bidderThread1 = new Thread(bidder1);
-        bidderThread1.setName("B1");
         Thread bidderThread2 = new Thread(bidder2);
+        bidderThread1.setName("B1");
         bidderThread2.setName("B2");
 
         // Start bidder threads
