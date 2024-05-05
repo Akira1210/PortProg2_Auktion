@@ -22,6 +22,9 @@ public class Main {
         // Create an auction house
         AuctionHouse auctionHouse = new AuctionHouse();
 
+        // Add Interests for Bidders to List
+        Create.setListInterests();
+
         // Create auctioneers
         Auctioneers auctioneer1 = new Auctioneers(auctionHouse);
         Auctioneers auctioneer2 = new Auctioneers(auctionHouse);
@@ -98,9 +101,22 @@ public class Main {
         }
     }
 
+    //Auctioneers randomly pick a product to sell
     private static Products prodToAuctioneer(){
         Random rand = new Random();
-        return Products.getItem(rand.nextInt(0,Products.getItemAmount()-1));
+        boolean alreadyInAuction = false;
+        Products t=null;
+        int i=0;
+
+        while(!alreadyInAuction) {
+            i++;
+            t = Products.getItem(rand.nextInt(0,Products.getItemAmount()-1));
+            alreadyInAuction=t.getInAuction();
+            if (i==Products.getItemAmount());{
+                break;
+            }
+    }
+    return t;
 
     }
 

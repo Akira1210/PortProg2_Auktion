@@ -5,10 +5,12 @@ public class Bidders implements Runnable {
     private double budget;
     private int aggressiveBehavior;
     private Auction currentAuction;
+    private String interest;
 
-    public Bidders(double budget, int aggressiveBehavior) {
+    public Bidders(double budget, int aggressiveBehavior, String interest) {
         this.budget = budget;
         this.aggressiveBehavior = aggressiveBehavior;
+        this.interest=interest;
     }
 
 
