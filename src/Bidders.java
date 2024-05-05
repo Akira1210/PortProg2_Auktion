@@ -3,12 +3,17 @@ import java.util.concurrent.TimeUnit;
 
 public class Bidders implements Runnable {
     private double budget;
-    private boolean aggressiveBehavior;
+    private int aggressiveBehavior;
     private Auction currentAuction;
 
-    public Bidders(double budget, boolean aggressiveBehavior) {
+    public Bidders(double budget, int aggressiveBehavior) {
         this.budget = budget;
         this.aggressiveBehavior = aggressiveBehavior;
+    }
+
+
+    public Bidders(Bidders bidder) {
+        //TODO Auto-generated constructor stub
     }
 
 

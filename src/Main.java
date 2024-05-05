@@ -1,3 +1,9 @@
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.NoSuchElementException;
+import java.util.Random;
+import java.util.Scanner;
+
 public class Main {
     private static Auction currentAuction;
 
@@ -9,7 +15,7 @@ public class Main {
         currentAuction = auction;
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws FileNotFoundException, NoSuchElementException {
         // Create a communicator
         Communicator communicator = new Communicator();
 
@@ -25,12 +31,11 @@ public class Main {
         communicator.registerAuctioneer(auctioneer2);
 
         // Create products
-        Products product1 = new Products(125, 25, 25);
-        Products product2 = new Products(250, 10, 180);
+        setProd();
 
         // Register products
-        auctioneer1.registerProduct(product1);
-        auctioneer2.registerProduct(product2);
+        auctioneer1.registerProduct(prodToAuctioneer());
+        auctioneer2.registerProduct(prodToAuctioneer());
 
         // Create threads for starting auctions
         Thread auctionThread1 = new Thread(() -> auctioneer1.startAuctions());
@@ -38,7 +43,9 @@ public class Main {
 
         // Start auction threads
         auctionThread1.start();
+        auctionThread1.setName("A1");
         auctionThread2.start();
+        auctionThread2.setName("A2");
 
         try {
             auctionThread1.join();
@@ -49,16 +56,58 @@ public class Main {
 
 
         // Create and start bidders
-        Bidders bidder1 = new Bidders(500, true); // Bidder with 500 euros budget and aggressive behavior
-        Bidders bidder2 = new Bidders(400, false); // Bidder with 1000 euros budget and non-aggressive behavior
+        Bidders bidder1 = new Bidders(Create.createBidder()); // 
+        Bidders bidder2 = new Bidders(Create.createBidder()); // Bidder with 1000 euros budget and non-aggressive behavior
 
         Thread bidderThread1 = new Thread(bidder1);
+        bidderThread1.setName("B1");
         Thread bidderThread2 = new Thread(bidder2);
+        bidderThread2.setName("B2");
 
         // Start bidder threads
         bidderThread1.start();
         bidderThread2.start();
-    }}
+    }
+
+    /**
+     * Liest Produkte aus Products.txt aus
+     * @throws FileNotFoundException
+     * @throws NoSuchElementException
+     */
+     private static void setProd() throws FileNotFoundException, NoSuchElementException {
+        File file = new File("src/Products.txt");
+        Scanner prodfile = new Scanner(file);
+
+        try {
+            while (prodfile.hasNext()) {
+                prodfile.nextLine();
+                String name = prodfile.next(); // Datei besteht aus: Name des Produkts
+                String type = prodfile.next(); // Produkttyp
+                String price = prodfile.next();// Startpreis
+                String step = prodfile.next(); // Preisschritte
+                String end = prodfile.next();  // Mindestpreis
+                                            // Produkte werden mit '-' voneinander getrennt
+                Products t = new Products(name, type, Double.parseDouble(price), Integer.parseInt(step), Double.parseDouble(end));
+
+                prodfile.nextLine();
+
+            }
+        } catch (NoSuchElementException e) {
+            System.out.println("All Products added");
+            prodfile.close();
+        }
+    }
+
+    private static Products prodToAuctioneer(){
+        Random rand = new Random();
+        return Products.getItem(rand.nextInt(0,Products.getItemAmount()-1));
+
+    }
+
+}
+
+
+    
 
 
 
