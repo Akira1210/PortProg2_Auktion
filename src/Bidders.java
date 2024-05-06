@@ -14,10 +14,6 @@ public class Bidders implements Runnable {
     }
 
 
-    public Bidders(Bidders bidder) {
-        //TODO Auto-generated constructor stub
-    }
-
 
     @Override
     public void run() {
@@ -31,15 +27,21 @@ public class Bidders implements Runnable {
             double currentPrice = currentAuction.getCurrentPrice();
             double budget = getBudget();
             Products product = currentAuction.getProduct();
+            Random rand = new Random();
 
             // Check if the bidder has enough budget
             if (currentPrice <= budget) {
                 // Use a synchronized block to ensure that only one thread can call the bid method at a time
                 synchronized (currentAuction) {
-                    if (!currentAuction.isAuctionEnded()) {
-                        // Place a bid with the current price
-                        currentAuction.bid(currentPrice);
-                        System.out.println("Bidder " + this + " placed a bid of " + currentPrice + " euros on " + product);
+                    if (!currentAuction.isAuctionEnded()&rand.nextInt(0,100)>75) {
+                        int decision = 0;
+                        decision+=(this.budget/currentPrice)*100;
+                        if (this.interest.equals(currentAuction.getProduct().getItemType())) {decision+=200;}
+                        decision+=rand.nextInt(0,200);
+                        if (decision>400) {currentAuction.bid(currentPrice);}
+
+                        //currentAuction.bid(currentPrice);
+                        System.out.println("Bidder " + Thread.currentThread().getName() + " placed a bid of " + currentPrice + " euros on " + Products.getItemName(product));
                     }
                 }
             } else {

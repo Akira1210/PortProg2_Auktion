@@ -43,7 +43,7 @@ public class Auction implements Runnable {
 
             if (currentPrice <= product.getMinimalPrice()) {
                 auctionEnded = true;
-                System.out.println("Auction ended. Minimal price reached for " + product + ": " + product.getMinimalPrice() + " euros.");
+                System.out.println("Auction ended. Minimal price reached for " + Products.getItemName(product) + ": " + product.getMinimalPrice() + " euros.");
             }
         } catch (InterruptedException e) {
             e.printStackTrace();

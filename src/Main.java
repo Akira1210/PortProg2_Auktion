@@ -59,8 +59,8 @@ public class Main {
 
 
         // Create and start bidders
-        Bidders bidder1 = new Bidders(Create.createBidder()); // 
-        Bidders bidder2 = new Bidders(Create.createBidder()); // Bidder with 1000 euros budget and non-aggressive behavior
+        Bidders bidder1 = Create.createBidder(); // 
+        Bidders bidder2 = Create.createBidder(); // Bidder with 1000 euros budget and non-aggressive behavior
 
         Thread bidderThread1 = new Thread(bidder1);
         Thread bidderThread2 = new Thread(bidder2);
