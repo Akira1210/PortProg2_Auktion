@@ -1,5 +1,6 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.InputMismatchException;
 import java.util.NoSuchElementException;
 import java.util.Random;
 import java.util.Scanner;
@@ -15,7 +16,59 @@ public class Main {
         currentAuction = auction;
     }
 
-    public static void main(String[] args) throws FileNotFoundException, NoSuchElementException {
+    public static void main(String[] args) throws FileNotFoundException, NoSuchElementException, NumberFormatException {
+        
+        // Create products
+        setProd();
+        
+        //TODO Sysin for Number of Bidders and Auctions
+        Scanner input = new Scanner(System.in);
+        int numAuctions=0;
+        int numAuctioneers=0;
+        int numBidders=0;
+
+        // System.out.println("Bitte geben Sie die Anzahl der Auktionen an:");
+        // try {
+        //     numAuctions = input.nextInt();
+        //     if (numAuctions>Products.getItemAmount()) {
+        //         System.out.println("Es stehen nicht genug Produkte zur Verfügung, um die angegebene Anzahl von Auktionen durchzuführen."+
+        //         " Es werden nur " + Products.getItemAmount() + " Auktionen durchgeführt.");
+        //         numAuctions = Products.getItemAmount();
+        //     }
+        //     if (numAuctions<1) {NumberFormatException();}
+        // } catch (InputMismatchException eAu) {
+        //     HandleInputMismatchException(eAu);
+    
+        // }
+
+        System.out.println("Bitte geben Sie die Anzahl der Auktionatoren an:");
+        try {
+            numAuctioneers = input.nextInt();
+            //if (numAuctions<numAuctioneers) {
+                //String t="";
+                //String s="";
+                //if (numAuctions==1) {t = " Auktionator ";s=" wird ";}
+                //if (numAuctions>1) {t = " Auktionatoren ";s=" werden ";}
+                //System.out.println("(!Hinweis!) Es nehmen mehr Auktionatoren teil, als Auktionen durchgeführt werden. Es" + s + "nur "+numAuctions+ t + "eine Auktion durchführen.");
+                //numAuctioneers=numAuctions;
+                numAuctions=numAuctioneers;
+                if (numAuctioneers<1) {NumberFormatException();}
+            //}
+        } catch (InputMismatchException eA) {
+            //HandleInputMismatchException(eA);
+        }
+
+        System.out.println("Bitte geben Sie die Anzahl der Bieter an:");
+        try {
+            numBidders = input.nextInt();
+            if (numBidders<1) {NumberFormatException();}
+        } catch (InputMismatchException eB) {
+            HandleInputMismatchException(eB);
+        }
+        input.close();
+
+        //End Sysin
+        
         // Create a communicator
         Communicator communicator = new Communicator();
 
@@ -26,50 +79,76 @@ public class Main {
         Create.setListInterests();
 
         // Create auctioneers
-        Auctioneers auctioneer1 = new Auctioneers(auctionHouse);
-        Auctioneers auctioneer2 = new Auctioneers(auctionHouse);
+        for (int i=0; i<numAuctioneers;i++){
+            Auctioneers t = new Auctioneers(auctionHouse);
+            communicator.registerAuctioneer(t);                 //Register auctioneers
+            t.registerProduct(prodToAuctioneer());              //Register products
+            Thread th = new Thread(() -> t.startAuctions());    //Create threads for starting auctions
+            th.setName("Auctioneer " + (i+1));                      //Set Name of Thread for debugging
+            th.start();                                         //Start auction threads
+            try {
+                th.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        //Auctioneers auctioneer1 = new Auctioneers(auctionHouse);
+        //Auctioneers auctioneer2 = new Auctioneers(auctionHouse);
 
         // Register auctioneers
-        communicator.registerAuctioneer(auctioneer1);
-        communicator.registerAuctioneer(auctioneer2);
-
-        // Create products
-        setProd();
+        //communicator.registerAuctioneer(auctioneer1);
+        //communicator.registerAuctioneer(auctioneer2);
 
         // Register products
-        auctioneer1.registerProduct(prodToAuctioneer());
-        auctioneer2.registerProduct(prodToAuctioneer());
+        //auctioneer1.registerProduct(prodToAuctioneer());
+        //auctioneer2.registerProduct(prodToAuctioneer());
 
         // Create threads for starting auctions
-        Thread auctionThread1 = new Thread(() -> auctioneer1.startAuctions());
-        Thread auctionThread2 = new Thread(() -> auctioneer2.startAuctions());
+        //Thread auctionThread1 = new Thread(() -> auctioneer1.startAuctions());
+        //Thread auctionThread2 = new Thread(() -> auctioneer2.startAuctions());
 
         // Start auction threads
-        auctionThread1.setName("A1");
-        auctionThread1.start();
-        auctionThread2.setName("A2");
-        auctionThread2.start();
+        // auctionThread1.setName("A1");
+        // auctionThread1.start();
+        // auctionThread2.setName("A2");
+        // auctionThread2.start();
 
-        try {
-            auctionThread1.join();
-            auctionThread2.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
+        // try {
+        //     auctionThread1.join();
+        //     auctionThread2.join();
+        // } catch (InterruptedException e) {
+        //     e.printStackTrace();
+        // }
 
         // Create and start bidders
-        Bidders bidder1 = Create.createBidder(); // 
-        Bidders bidder2 = Create.createBidder(); // Bidder with 1000 euros budget and non-aggressive behavior
 
-        Thread bidderThread1 = new Thread(bidder1);
-        Thread bidderThread2 = new Thread(bidder2);
-        bidderThread1.setName("B1");
-        bidderThread2.setName("B2");
+        for (int i=0; i<numBidders;i++) {
+            Bidders t = Create.createBidder();
+            Thread th = new Thread(t);
+            th.setName("Bidder " + (i+1));
+            th.start();
+        }
+        // Bidders bidder1 = Create.createBidder(); // 
+        // Bidders bidder2 = Create.createBidder(); // Bidder with 1000 euros budget and non-aggressive behavior
 
-        // Start bidder threads
-        bidderThread1.start();
-        bidderThread2.start();
+        // Thread bidderThread1 = new Thread(bidder1);
+        // Thread bidderThread2 = new Thread(bidder2);
+        // bidderThread1.setName("B1");
+        // bidderThread2.setName("B2");
+
+        // // Start bidder threads
+        // bidderThread1.start();
+        // bidderThread2.start();
+    }
+
+    private static void HandleInputMismatchException(InputMismatchException e) {
+        System.out.println(e + ": Eingabe muss eine Ganzzahl sein");
+        System.exit(-1);
+    }
+
+    private static void NumberFormatException() {
+        System.out.println("Eingabe muss eine positive Ganzzahl sein");
+        System.exit(-1);
     }
 
     /**
