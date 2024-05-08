@@ -1,5 +1,7 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class Auctioneers {
     private AuctionHouse auctionHouse;
@@ -13,11 +15,13 @@ public class Auctioneers {
     public void registerProduct(Products product) {
         products.add(product);
     }
-
     public void startAuctions() {
+        ExecutorService executor = Executors.newFixedThreadPool(products.size());
         for (Products product : products) {
-            auctionHouse.createAuction(product);
+            executor.submit(() -> auctionHouse.createAuction(product));
         }
+        executor.shutdown();
     }
 }
+
 

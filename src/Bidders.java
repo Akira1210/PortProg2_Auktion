@@ -6,6 +6,8 @@ public class Bidders implements Runnable {
     private int aggressiveBehavior;
     private Auction currentAuction;
     private String interest;
+    private Communicator communicator;
+    private int index;
 
     public Bidders(double budget, int aggressiveBehavior, String interest) {
         this.budget = budget;
@@ -18,45 +20,60 @@ public class Bidders implements Runnable {
     @Override
     public void run() {
         Random random = new Random();
+        double budget = getBudget();
         while (true) {
             Auction currentAuction = Main.getCurrentAuction();
             if (currentAuction == null || currentAuction.isAuctionEnded()) {
-                break; // Exit the loop if the auction has ended or not started
+                break;
             }
 
             double currentPrice = currentAuction.getCurrentPrice();
-            double budget = getBudget();
-            Products product = currentAuction.getProduct();
-            Random rand = new Random();
-
-            // Check if the bidder has enough budget
             if (currentPrice <= budget) {
-                // Use a synchronized block to ensure that only one thread can call the bid method at a time
                 synchronized (currentAuction) {
-                    if (!currentAuction.isAuctionEnded()&rand.nextInt(0,100)>75) {
+                    if (!currentAuction.isAuctionEnded()) {
                         int decision = 0;
-                        decision+=(this.budget/currentPrice)*100;
-                        if (this.interest.equals(currentAuction.getProduct().getItemType())) {decision+=200;}
-                        decision+=rand.nextInt(0,200);
-                        if (decision>400) {currentAuction.bid(currentPrice);}
+                        decision += (this.budget / currentPrice) * 100;
+                        if (this.interest.equals(currentAuction.getProduct().getItemType())) {
+                            decision += 200;
+                        }
+                        decision += random.nextInt(0, 200);
 
-                        //currentAuction.bid(currentPrice);
-                        System.out.println("Bidder " + Thread.currentThread().getName() + " placed a bid of " + currentPrice + " euros on " + Products.getItemName(product));
+                        // Advanced bidding logic: aggressive behavior
+                        if (aggressiveBehavior > 50) {
+                            decision += 100;
+                        }
+
+                        // Advanced bidding logic: randomness factor
+                        if (random.nextBoolean()) {
+                            decision += 50;
+                        }
+
+                        if (decision > 400) {
+                            currentAuction.bid(currentPrice);
+                            System.out.println("Bidder " + Thread.currentThread().getName() + " placed a bid of " + currentPrice + " euros on " + Products.getItemName(currentAuction.getProduct()));
+                        }
                     }
                 }
             } else {
-                break; // Exit the loop if the bidder does not have enough budget
+                break;
             }
 
-            // Wait for a random time before placing the next bid
             try {
-                Thread.sleep(random.nextInt(5000) + 1000);
+                TimeUnit.MILLISECONDS.sleep(random.nextInt(5000) + 1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
     }
+
     public double getBudget() {
         return budget;
+    }
+
+    public void setIndex(int index) {
+        this.index = index;
+    }
+    public void setCommunicator(Communicator communicator) {
+        this.communicator = communicator;
     }
 }

@@ -1,9 +1,13 @@
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class AuctionHouse {
     private List<Auction> auctions;
+
+
 
     public AuctionHouse() {
         this.auctions = new ArrayList<>();
@@ -13,15 +17,16 @@ public class AuctionHouse {
         Auction auction = new Auction(product);
         auctions.add(auction);
         Main.setCurrentAuction(auction); // Set the current auction
-        Thread thread = new Thread(auction);
-        thread.start(); // Start the auction in a new thread
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.submit(auction);
+        executor.shutdown();
     }
 
     public synchronized void endAuction(Auction auction) {
         auctions.remove(auction);
     }
 
-    public List<Auction> getAuctions() {
-        return auctions;
+    public synchronized List<Auction> getAuctions() {
+        return new ArrayList<>(auctions);
     }
 }
