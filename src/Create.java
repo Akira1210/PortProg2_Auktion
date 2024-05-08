@@ -4,8 +4,8 @@ import java.util.Random;
  * Klasse, die dynamisch Objekte nach vorherigen User-Input von außen aufgerufen erzeugt
  */
 public class Create {
-        public static ArrayList<Bidders> ListBidders = new ArrayList<>();
-        public static ArrayList<Auctioneers> ListAuctioneers = new ArrayList<>();
+        //public static ArrayList<Bidders> ListBidders = new ArrayList<>();
+        //public static ArrayList<Auctioneers> ListAuctioneers = new ArrayList<>();
         public static ArrayList<String> ListInterests = new ArrayList<>();
     
         /**
@@ -15,7 +15,7 @@ public class Create {
          */
         public static void CreateNum(int type, int numA) {
             for (int i = 0; i < numA; i++) {
-                CreateRand(type, i);
+                //CreateRand(type, i);
             }
         }
 
@@ -37,24 +37,21 @@ public class Create {
             ListInterests.add("Furniture");
             ListInterests.add("None");
         }
-    /**
-     * Erstellt Bieter und Auktionatoren 
-     * @param type 0 = erstellt Bieter Objekt, 1 = erstellt Auktionator Objekt
-     * @param thisnum gibt zur Benennung jedem Objekt eine Nummer
-     */
-        private static void CreateRand(int type, int thisnum) {
+
+    
+
+
+        public static Bidders createBidder(){
             Random rand = new Random();
-            if (type == 0) {
-                Bidders t = new Bidders(rand.nextInt(0, 101), ListInterests.get(rand.nextInt(0,ListInterests.size())), rand.nextDouble(500, 1000000), "Bidder: " + (thisnum + 1));
-                ListBidders.add(t);
-    
-            }
-            if (type == 1) {
-                Auctioneers t = new Auctioneers(rand.nextInt(2000, 5000), "Auctioneer: " + (thisnum + 1));
-                ListAuctioneers.add(t);
-    
-            }
-    
+            Bidders t = new Bidders(rand.nextInt(50, 30000), rand.nextInt(0,100), ListInterests.get(rand.nextInt(0,ListInterests.size()-1)));
+                //ListBidders.add(t);
+                return t;
+        }
+
+        public static Auctioneers createAuctioneer(AuctionHouse auctionHouse){
+            Auctioneers t = new Auctioneers(auctionHouse);
+            //ListAuctioneers.add(t);
+            return t;
         }
     }
     
