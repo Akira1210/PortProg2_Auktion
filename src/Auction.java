@@ -1,4 +1,3 @@
-import java.util.concurrent.TimeUnit;
 public class Auction implements Runnable {
     private Products product;
     private double currentPrice;
@@ -61,4 +60,7 @@ public class Auction implements Runnable {
         return winningBid;
     }
 
+    public boolean isRunning() {
+        return !auctionEnded;
+    }
 }

@@ -1,6 +1,3 @@
-/**
- * Klasse für die Kommunikation zwischen Bieter und Auktionatoren
- */
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,18 +20,17 @@ public class Communicator {
 
     public void notifyAuctioneer(int numBidders, String bidderName, double bidAmount) {
         for (Auctioneers auctioneer : auctioneers) {
+
             System.out.println("Notification for Auctioneer: " + auctioneer);
             System.out.println("Number of bidders registered: " + numBidders);
             System.out.println("Bidder: " + bidderName + " placed a bid of " + bidAmount + " euros.");
         }
     }
 
-    public void notifyBidder(Products product, double currentPrice) {
+    public void notifyBidder(Products product, double currentPrice, double budget) {
         for (Bidders bidder : bidders) {
             System.out.println("Notification for Bidder: " + bidder);
             System.out.println("Auction details: Product - " + product + ", Current price - " + currentPrice + " euros.");
         }
     }
 }
-
-
