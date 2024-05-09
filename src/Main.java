@@ -1,15 +1,17 @@
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList; import java.util.InputMismatchException;
-import java.util.List; import java.util.NoSuchElementException;
-import java.util.Random; import java.util.Scanner;
+import java.util.ArrayList;
+import java.util.InputMismatchException;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Random;
+import java.util.Scanner;
 import java.util.concurrent.*;
-
 
 public class Main {
     private static Auction currentAuction;
     private static int numAuctioneers;
-    private static int numAuctions;
+    //private static int numAuctions;
     private static int numBidders;
 
     public static Auction getCurrentAuction() {
@@ -39,16 +41,13 @@ public class Main {
         // Create products
         setProd();
 
-        //TODO Sysin for Number of Bidders and Auctions
+        // TODO Sysin for Number of Auctions
         Scanner input = new Scanner(System.in);
-        int numAuctions = 0;
-        int numAuctioneers = 0;
-        int numBidders = 0;
 
         System.out.println("Bitte geben Sie die Anzahl der Auktionatoren an:");
         try {
             numAuctioneers = input.nextInt();
-            numAuctions = numAuctioneers;
+            //numAuctions = numAuctioneers;
             if (numAuctioneers < 1) {
                 NumberFormatException();
             }
@@ -67,7 +66,7 @@ public class Main {
         }
         input.close();
 
-        //End Sysin
+        // End Sysin
 
         // Create a communicator
         Communicator communicator = new Communicator();
@@ -82,12 +81,12 @@ public class Main {
         List<Auctioneers> auctioneers = new ArrayList<>();
         for (int i = 0; i < numAuctioneers; i++) {
             Auctioneers t = new Auctioneers(auctionHouse);
-            communicator.registerAuctioneer(t);                 //Register auctioneers
-            t.registerProduct(prodToAuctioneer());              //Register products
+            communicator.registerAuctioneer(t); // Register auctioneers
+            t.registerProduct(prodToAuctioneer()); // Register products
             auctioneers.add(t);
         }
 
-        // Create and start bidders
+        // Create bidders
         List<Bidders> bidders = new ArrayList<>();
         for (int i = 0; i < numBidders; i++) {
             Bidders t = Create.createBidder();
@@ -100,24 +99,25 @@ public class Main {
         ThreadPoolExecutor executorService = new ThreadPoolExecutor(
                 numThreads, // corePoolSize
                 numThreads, // maximumPoolSize
-                0L, // keepAliveTime
+                100L, // keepAliveTime
                 TimeUnit.MILLISECONDS, // unit
                 new LinkedBlockingQueue<>() // workQueue
         );
 
-        for (int i = 0; i < numBidders; i++) {
-            final int index = i;
-            executorService.submit(() -> {
-                Bidders bidder = bidders.get(index);
-                bidder.setCommunicator(communicator);
-                bidder.setIndex(index);
-                bidder.run();
-            });
-        }
-
         // Start auction threads
         for (Auctioneers auctioneer : auctioneers) {
             executorService.submit(() -> auctioneer.startAuctions());
+        }
+
+        for (int i = 0; i < numBidders; i++) {
+            final int index = i;
+            //Bidders bidder = bidders.get(index);
+            for (Auction auction : AuctionHouse.getAuctions()) {
+                bidders.get(i).registerForAuction(auction);
+            }
+            bidders.get(i).setCommunicator(communicator);
+            bidders.get(i).setIndex(i);
+            executorService.submit(() -> bidders.get(index).run());
         }
 
         // Wait for all threads to finish
@@ -155,9 +155,10 @@ public class Main {
                 String type = prodfile.next(); // Produkttyp
                 String price = prodfile.next();// Startpreis
                 String step = prodfile.next(); // Preisschritte
-                String end = prodfile.next();  // Mindestpreis
+                String end = prodfile.next(); // Mindestpreis
                 // Produkte werden mit '-' voneinander getrennt
-                Products t = new Products(name, type, Double.parseDouble(price), Integer.parseInt(step), Double.parseDouble(end));
+                Products t = new Products(name, type, Double.parseDouble(price), Integer.parseInt(step),
+                        Double.parseDouble(end));
 
                 prodfile.nextLine();
 
@@ -168,7 +169,7 @@ public class Main {
         }
     }
 
-    //Auctioneers randomly pick a product to sell
+    // Auctioneers randomly pick a product to sell
     private static Products prodToAuctioneer() {
         Random rand = new Random();
         boolean alreadyInAuction = false;
@@ -179,7 +180,8 @@ public class Main {
             i++;
             t = Products.getItem(rand.nextInt(0, Products.getItemAmount() - 1));
             alreadyInAuction = t.getInAuction();
-            if (i == Products.getItemAmount()) ;
+            if (i == Products.getItemAmount())
+                ;
             {
                 break;
             }
@@ -189,4 +191,3 @@ public class Main {
     }
 
 }
-

@@ -16,7 +16,7 @@ public class Auction implements Runnable {
     }
 
     public void bid(double amount) {
-        synchronized (lock) {
+        //synchronized (lock) {
             if (!auctionEnded && amount >= currentPrice) {
                 System.out.println("Bidder " + Thread.currentThread().getName() + " placed a bid of " + amount + " euros on " + Products.getItemName(product));
                 currentPrice = amount;
@@ -24,7 +24,7 @@ public class Auction implements Runnable {
                 auctionEnded = true;
                 lock.notifyAll();
             }
-        }
+        //}
     }
 
     @Override
