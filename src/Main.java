@@ -11,39 +11,15 @@ import java.util.concurrent.*;
 public class Main {
     private static Auction currentAuction;
     private static int numAuctioneers;
-    //private static int numAuctions;
     private static int numBidders;
-
-    public static Auction getCurrentAuction() {
-        return currentAuction;
-    }
-
-    public static void setCurrentAuction(Auction auction) {
-        currentAuction = auction;
-    }
-
-    public static int calculateNumThreads() {
-        // Number of auctioneer threads
-        int numAuctioneerThreads = Math.max(numAuctioneers, 1);
-
-        // Maximum number of concurrent bids per bidder
-        int maxBidsPerBidder = 1; // Each bidder can bid in every auction
-
-        // Total number of bidder threads
-        int numBidderThreads = Math.max(numBidders * maxBidsPerBidder, 1);
-
-        // Total number of threads
-        return numAuctioneerThreads + numBidderThreads;
-    }
+    private static boolean AllAuctionsAdded=false;
 
     public static void main(String[] args) throws FileNotFoundException, NoSuchElementException, NumberFormatException {
 
         // Create products
         setProd();
 
-        // TODO Sysin for Number of Auctions
         Scanner input = new Scanner(System.in);
-
         System.out.println("Bitte geben Sie die Anzahl der Auktionatoren an:");
         try {
             numAuctioneers = input.nextInt();
@@ -65,8 +41,6 @@ public class Main {
             HandleInputMismatchException(eB);
         }
         input.close();
-
-        // End Sysin
 
         // Create a communicator
         Communicator communicator = new Communicator();
@@ -107,11 +81,23 @@ public class Main {
         // Start auction threads
         for (Auctioneers auctioneer : auctioneers) {
             executorService.submit(() -> auctioneer.startAuctions());
+            
         }
 
+        // Wait for all Auctions to be added to AuctionList
+        while (AllAuctionsAdded==false) {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        // Register Bidders to certain Auctions
         for (int i = 0; i < numBidders; i++) {
-            final int index = i;
-            //Bidders bidder = bidders.get(index);
+           final int index = i;
+           synchronized (AuctionHouse.getAuctions()) {}
+
             for (Auction auction : AuctionHouse.getAuctions()) {
                 bidders.get(i).registerForAuction(auction);
             }
@@ -128,20 +114,9 @@ public class Main {
             e.printStackTrace();
         }
     }
-
-    private static void HandleInputMismatchException(InputMismatchException e) {
-        System.out.println(e + ": Eingabe muss eine Ganzzahl sein");
-        System.exit(-1);
-    }
-
-    private static void NumberFormatException() {
-        System.out.println("Eingabe muss eine positive Ganzzahl sein");
-        System.exit(-1);
-    }
-
     /**
-     * Liest Produkte ausProducts.txt aus* @throws FileNotFoundException
-     *
+     * Liest Produkte aus Products.txt aus
+     * @throws FileNotFoundException
      * @throws NoSuchElementException
      */
     private static void setProd() throws FileNotFoundException, NoSuchElementException {
@@ -173,21 +148,68 @@ public class Main {
     private static Products prodToAuctioneer() {
         Random rand = new Random();
         boolean alreadyInAuction = false;
-        Products t = null;
+        Products prod = null;
         int i = 0;
 
         while (!alreadyInAuction) {
             i++;
-            t = Products.getItem(rand.nextInt(0, Products.getItemAmount() - 1));
-            alreadyInAuction = t.getInAuction();
-            if (i == Products.getItemAmount())
-                ;
+            prod = Products.getItem(rand.nextInt(0, Products.getItemAmount() - 1));
+            alreadyInAuction = prod.getInAuction();
+            if (i == Products.getItemAmount());
             {
                 break;
             }
         }
-        return t;
+        return prod;
 
     }
+
+    public static int calculateNumThreads() {
+        // Number of auctioneer threads
+        int numAuctioneerThreads = Math.max(numAuctioneers, 1);
+
+        // Maximum number of concurrent bids per bidder
+        int maxBidsPerBidder = 1; // Each bidder can bid in every auction
+
+        // Total number of bidder threads
+        int numBidderThreads = Math.max(numBidders * maxBidsPerBidder, 1);
+
+        // Total number of threads
+        return numAuctioneerThreads + numBidderThreads;
+    }
+
+    //GETTERS / SETTERS
+
+    public static int getNumAuctioneers(){
+        return numAuctioneers;
+    }
+
+    public static void setAllAuctionsAdded(boolean allauctionsadded) {
+        AllAuctionsAdded = allauctionsadded;
+    }
+
+    public static Auction getCurrentAuction() {
+        return currentAuction;
+    }
+
+    public static void setCurrentAuction(Auction auction) {
+        currentAuction = auction;
+    }
+
+
+    //EXCEPTION HANDELING
+    private static void HandleInputMismatchException(InputMismatchException e) {
+        System.out.println(e + ": Eingabe muss eine Ganzzahl sein");
+        System.exit(-1);
+    }
+
+    private static void NumberFormatException() {
+        System.out.println("Eingabe muss eine positive Ganzzahl sein");
+        System.exit(-1);
+    }
+
+
+
+
 
 }

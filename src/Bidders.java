@@ -6,20 +6,19 @@ import java.util.concurrent.TimeUnit;
 public class Bidders implements Runnable {
     private double budget;
     private int aggressiveBehavior;
-    private Auction currentAuction;
+    //private Auction currentAuction;
     private String interest;
     private Communicator communicator;
     private int index;
     private static final double DEFAULT_CHANCE = 0.5;
     private static final double INTERESTED_CHANCE_INCREMENT = 0.2;
-    private final Set<Auction> registeredAuctions = new HashSet<>();
+    private Set<Auction> registeredAuctions = new HashSet<>();
 
     public Bidders(double budget, int aggressiveBehavior, String interest) {
         this.budget = budget;
         this.aggressiveBehavior = aggressiveBehavior;
         this.interest=interest;
     }
-
 
     @Override
     public void run() {
@@ -33,11 +32,10 @@ public class Bidders implements Runnable {
                 System.out.println("Hello break"+Thread.currentThread().getName());
                 break;
             }
-
             double currentPrice = currentAuction.getCurrentPrice();
 
             // Check if the bidder is registered for the current auction
-            if (registeredAuctions.contains(currentAuction)) {
+            if (this.registeredAuctions.contains(currentAuction)) {
                 System.out.println("Hello register"+Thread.currentThread().getName());
                 synchronized (currentAuction) {
                     if (!currentAuction.isAuctionEnded()) {
@@ -58,7 +56,7 @@ public class Bidders implements Runnable {
                         if (random.nextBoolean()) {
                             decision += 50;
                         }
-                        if (decision >= 1000) {
+                        if (decision >= 1) {
                             System.out.println(decision);
                             currentAuction.bid(currentPrice);
                             System.out.println("Bidder " + Thread.currentThread().getName() + " placed a bid of " + currentPrice + " euros on " + Products.getItemName(currentAuction.getProduct()));
@@ -78,9 +76,10 @@ public class Bidders implements Runnable {
 
 
     public void registerForAuction(Auction auction) {
-        //if (interestedInAuction(auction)) {
-            registeredAuctions.add(auction);
-        //}
+        if (interestedInAuction(auction)) {
+            this.registeredAuctions.add(auction);
+            System.out.println("Registered for " + Products.getItemName(auction.getProduct()));
+        }
     }
     private boolean interestedInAuction(Auction auction) {
         double chance = DEFAULT_CHANCE;
@@ -107,6 +106,10 @@ public class Bidders implements Runnable {
     }
     public void setCommunicator(Communicator communicator) {
         this.communicator = communicator;
+    }
+
+    public Set<Auction> getRegisteredAuctions(){
+        return this.registeredAuctions;
     }
 
 }

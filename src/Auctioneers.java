@@ -13,11 +13,12 @@ public class Auctioneers {
     }
 
     public void registerProduct(Products product) {
-        products.add(product);
+        this.products.add(product);
     }
     public void startAuctions() {
         ExecutorService executor = Executors.newFixedThreadPool(products.size());
-        for (Products product : products) {
+        for (Products product : this.products) {
+
             executor.submit(() -> auctionHouse.createAuction(product));
         }
         executor.shutdown();
