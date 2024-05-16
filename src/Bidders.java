@@ -25,9 +25,12 @@ public class Bidders implements Runnable {
     public void run() {
         Random random = new Random();
         double budget = getBudget();
+        System.out.println("Hello"+Thread.currentThread().getName());
         while (true) {
             Auction currentAuction = Main.getCurrentAuction();
+            System.out.println("Hello while"+Thread.currentThread().getName());
             if (currentAuction == null || !currentAuction.isRunning()) {
+                System.out.println("Hello break"+Thread.currentThread().getName());
                 break;
             }
 
@@ -35,10 +38,12 @@ public class Bidders implements Runnable {
 
             // Check if the bidder is registered for the current auction
             if (registeredAuctions.contains(currentAuction)) {
+                System.out.println("Hello register"+Thread.currentThread().getName());
                 synchronized (currentAuction) {
                     if (!currentAuction.isAuctionEnded()) {
+                        System.out.println("Hello Auction active"+Thread.currentThread().getName());
                         int decision = 0;
-                        decision += (this.budget / currentPrice) * 100;
+                        decision += (this.budget / currentPrice)*10;
                         if (this.interest.equals(currentAuction.getProduct().getItemType())) {
                             decision += 200;
                         }
@@ -53,18 +58,19 @@ public class Bidders implements Runnable {
                         if (random.nextBoolean()) {
                             decision += 50;
                         }
-
-                        if (decision > 400) {
+                        if (decision >= 1000) {
+                            System.out.println(decision);
                             currentAuction.bid(currentPrice);
                             System.out.println("Bidder " + Thread.currentThread().getName() + " placed a bid of " + currentPrice + " euros on " + Products.getItemName(currentAuction.getProduct()));
                         }
                     }
-                }
+               }
             }
 
             try {
-                TimeUnit.MILLISECONDS.sleep(random.nextInt(5000) + 1000);
+                TimeUnit.MILLISECONDS.sleep(random.nextInt(1000,2000));
             } catch (InterruptedException e) {
+                System.out.println("Hello catch"+Thread.currentThread().getName());
                 e.printStackTrace();
             }
         }
@@ -72,9 +78,9 @@ public class Bidders implements Runnable {
 
 
     public void registerForAuction(Auction auction) {
-        if (interestedInAuction(auction)) {
+        //if (interestedInAuction(auction)) {
             registeredAuctions.add(auction);
-        }
+        //}
     }
     private boolean interestedInAuction(Auction auction) {
         double chance = DEFAULT_CHANCE;

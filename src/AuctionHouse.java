@@ -5,7 +5,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class AuctionHouse {
-    private List<Auction> auctions;
+    private static List<Auction> auctions;
 
 
 
@@ -26,7 +26,7 @@ public class AuctionHouse {
         auctions.remove(auction);
     }
 
-    public synchronized List<Auction> getAuctions() {
+    public synchronized static List<Auction> getAuctions() {
         return new ArrayList<>(auctions);
     }
 }
