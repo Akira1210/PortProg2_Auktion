@@ -15,7 +15,6 @@ public class AuctionHouse {
         Auction auction = new Auction(product);
         Reporter.addProduct(product);
         auctions.add(auction);
-        Main.setCurrentAuction(auction); // Set the current auction
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.submit(auction);
         executor.shutdown();

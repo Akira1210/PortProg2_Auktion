@@ -6,10 +6,10 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Random;
 import java.util.Scanner;
+import java.util.Set;
 import java.util.concurrent.*;
 
 public class Main {
-    private static Auction currentAuction;
     private static int numAuctioneers;
     private static int numBidders;
     private static boolean AllAuctionsAdded=false;
@@ -188,12 +188,15 @@ public class Main {
         AllAuctionsAdded = allauctionsadded;
     }
 
-    public static Auction getCurrentAuction() {
-        return currentAuction;
-    }
-
-    public static void setCurrentAuction(Auction auction) {
-        currentAuction = auction;
+    public static Auction getAuctionForBidder(Set<Auction> registeredAuctions) {
+        for (Auction regauction : registeredAuctions) {
+            for (Auction plannedAuction : AuctionHouse.getAuctions()) {
+                if (plannedAuction.equals(regauction)) {
+                    return plannedAuction;
+                }
+            }
+        }
+        return null;
     }
 
 
