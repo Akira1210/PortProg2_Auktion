@@ -12,7 +12,7 @@ import java.util.concurrent.*;
 public class Main {
     private static int numAuctioneers;
     private static int numBidders;
-    private static boolean AllAuctionsAdded=false;
+    private static boolean allAuctionsAdded=false;
 
     public static void main(String[] args) throws FileNotFoundException, NoSuchElementException, NumberFormatException {
 
@@ -23,7 +23,6 @@ public class Main {
         System.out.println("\nBitte geben Sie die Anzahl der Auktionatoren an:");
         try {
             numAuctioneers = input.nextInt();
-            //numAuctions = numAuctioneers;
             if (numAuctioneers < 1) {
                 NumberFormatException();
             }
@@ -87,7 +86,7 @@ public class Main {
         }
 
         // Warten, dass alle Auktionen in eine für die Bieter einsehbare Auktionsliste hinzugefügt wurden
-        while (AllAuctionsAdded==false) {
+        while (allAuctionsAdded==false) {
             try {
                 Thread.sleep(100);
             } catch (InterruptedException e) {
@@ -108,7 +107,7 @@ public class Main {
             executorService.submit(() -> bidders.get(index).run());
         }
 
-        // Warten auf ide Beendigung aller Threads
+        // Warten auf die Beendigung aller Threads
         executorService.shutdown();
         try {
             executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
@@ -139,12 +138,12 @@ public class Main {
         try {
             while (prodfile.hasNext()) {
                 prodfile.nextLine();
-                String name = prodfile.next(); // Datei besteht aus: Name des Produkts
-                String type = prodfile.next(); // Produkttyp
-                String price = prodfile.next();// Startpreis
-                String step = prodfile.next(); // Preisschritte
-                String end = prodfile.next(); // Mindestpreis
-                // Produkte werden mit '-' voneinander getrennt
+                String name = prodfile.next();  // Datei besteht aus: Name des Produkts
+                String type = prodfile.next();  // Produkttyp
+                String price = prodfile.next(); // Startpreis
+                String step = prodfile.next();  // Preisschritte
+                String end = prodfile.next();   // Mindestpreis
+                                                // Produkte werden mit '-' voneinander getrennt
                 Products t = new Products(name, type, Double.parseDouble(price), Integer.parseInt(step),
                         Double.parseDouble(end));
 
@@ -152,8 +151,7 @@ public class Main {
 
             }
         } catch (NoSuchElementException e) {
-            //System.out.println("All Products added");
-            prodfile.close();
+            prodfile.close(); //Alle Produkte wurden eingelesen
         }
     }
 
@@ -194,7 +192,7 @@ public class Main {
     }
 
     public static void setAllAuctionsAdded(boolean allauctionsadded) {
-        AllAuctionsAdded = allauctionsadded;
+        allAuctionsAdded = allauctionsadded;
     }
 
     public static Auction getAuctionForBidder(Set<Auction> registeredAuctions) {

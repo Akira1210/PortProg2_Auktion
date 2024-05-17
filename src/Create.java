@@ -25,18 +25,10 @@ public class Create {
             ListInterests.add("None");
         }
 
-    
-
-
         public static Bidders createBidder(){
-            Random rand = new Random();
+            Random rand = new Random();  // budget, aggressiveBehavior, interest
             Bidders t = new Bidders(rand.nextInt(50, 30000), rand.nextInt(0,100), ListInterests.get(rand.nextInt(0,ListInterests.size()-1)));
                 return t;
-        }
-
-        public static Auctioneers createAuctioneer(AuctionHouse auctionHouse){
-            Auctioneers t = new Auctioneers(auctionHouse);
-            return t;
         }
     }
     

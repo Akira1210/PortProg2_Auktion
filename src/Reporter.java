@@ -24,8 +24,8 @@ public class Reporter {
             profit+=item.getCurrentPrice();
         }
         AuctionStatistics="Es wurden " + BoughtItems.size() + " Produkte verkauft und ein Umsatz von " + profit + " Euro erzielt." +
-        "\nDie Provision für das Auktionshaus liegt bei 7,5%, wodurch für die Auktionatoren eine Provision von insgesamt " +
-        Math.round(profit*0.075) + " Euro erzielt wurde.";
+        "\nDie Provision für das Auktionshaus liegt bei 1%, wodurch für die Auktionatoren eine Provision von insgesamt " +
+        profit*0.01 + " Euro erzielt wurde.";
     }
 
     public static void printEndReport(){
