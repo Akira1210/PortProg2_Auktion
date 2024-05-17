@@ -33,11 +33,11 @@ public class Reporter {
         System.out.println("\nAlle Auktionen wurden beendet.");
         System.out.println("\nFolgende Produkte standen zum Verkauf:");
         for (String item: ItemsOnSale) {
-            System.out.println(item);
+            System.out.println(" -"+item);
         }
         System.out.println("\nFolgende Produkte wurden verkauft:");
         for (Auction item:BoughtItems) {
-            System.out.println(Products.getItemName(item.getProduct())+" wurde für "+item.getCurrentPrice()+" Euro verkauft.");
+            System.out.println(" -" + Products.getItemName(item.getProduct())+" wurde für "+item.getCurrentPrice()+" Euro verkauft.");
         }
         System.out.println("\nEinige Informationen zur Auktion:");
         System.out.println(AuctionInfo);

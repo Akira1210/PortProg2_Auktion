@@ -189,7 +189,6 @@ public class Main {
     }
 
     //GETTERS / SETTERS
-
     public static int getNumAuctioneers(){
         return numAuctioneers;
     }
@@ -220,9 +219,5 @@ public class Main {
         System.out.println("Eingabe muss eine positive Ganzzahl sein");
         System.exit(-1);
     }
-
-
-
-
 
 }

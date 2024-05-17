@@ -5,17 +5,6 @@ import java.util.Random;
  */
 public class Create {
         public static ArrayList<String> ListInterests = new ArrayList<>();
-    
-        /**
-         * Löst die Erstellung der Objekt aus, bekommt die Anzahl der gewünschten Objekte und lässt die Erstellung-Methode entsprechent häufig aus
-         * @param type 0 = erstellt Bieter Objekt, 1 = erstellt Auktionator Objekt
-         * @param numA Anzahl der zu erstellenten Objekte
-         */
-        public static void CreateNum(int type, int numA) {
-            for (int i = 0; i < numA; i++) {
-                //CreateRand(type, i);
-            }
-        }
 
         /**
          * Fügt Interessen eine Liste hinzu
