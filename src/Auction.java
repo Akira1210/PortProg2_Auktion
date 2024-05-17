@@ -18,7 +18,7 @@ public class Auction implements Runnable {
     public void bid(double amount) {
         //synchronized (lock) {
             if (!auctionEnded && amount >= currentPrice) {
-                System.out.println("Bidder " + Thread.currentThread().getName() + " placed a bid of " + amount + " euros on " + Products.getItemName(product));
+                System.out.println("Bieter" + Thread.currentThread().getName() + " hat ein Gebot von " + amount + " Euro für " + Products.getItemName(product) + " abgegeben.");
                 currentPrice = amount;
                 winningBid = amount;
                 auctionEnded = true;
@@ -32,7 +32,7 @@ public class Auction implements Runnable {
         synchronized (lock) {
             while (!auctionEnded && currentPrice > product.getMinimalPrice()) {
                 currentPrice -= product.getDecrementPrice();
-                System.out.println("Current price for " + Products.getItemName(product) + ": " + currentPrice + " euros.");
+                System.out.println("Der aktuelle Preis für " + Products.getItemName(product) + " liegt bei: " + currentPrice + " Euro.");
                 try {
                     Thread.sleep(5000);
                 } catch (InterruptedException e) {
@@ -41,7 +41,7 @@ public class Auction implements Runnable {
             }
             if (currentPrice <= product.getMinimalPrice()) {
                 auctionEnded = true;
-                System.out.println("Auction ended. Minimal price reached for " + Products.getItemName(product) + ": " + product.getMinimalPrice() + " euros.");
+                System.out.println("Auktion beendet. Der Mindestpreis für " + Products.getItemName(product) + " von: " + product.getMinimalPrice() + " Euro wurde erreicht.");
             }
         }
     }

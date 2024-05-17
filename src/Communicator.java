@@ -21,16 +21,16 @@ public class Communicator {
     public void notifyAuctioneer(int numBidders, String bidderName, double bidAmount) {
         for (Auctioneers auctioneer : auctioneers) {
 
-            System.out.println("Notification for Auctioneer: " + auctioneer);
-            System.out.println("Number of bidders registered: " + numBidders);
-            System.out.println("Bidder: " + bidderName + " placed a bid of " + bidAmount + " euros.");
+            System.out.println("Benachrichtigung für Auktionator: " + auctioneer);
+            System.out.println("Anzahl der registrierten Bieter: " + numBidders);
+            System.out.println("Bieter: " + bidderName + " hat ein Gebot von " + bidAmount + " Euro abgegeben.");
         }
     }
 
     public void notifyBidder(Products product, double currentPrice, double budget) {
         for (Bidders bidder : bidders) {
-            System.out.println("Notification for Bidder: " + bidder);
-            System.out.println("Auction details: Product - " + product + ", Current price - " + currentPrice + " euros.");
+            System.out.println("Benachrichtigung für Bieter: " + bidder);
+            System.out.println("Auktion Details: Produkt - " + product + ", Aktueller Preis - " + currentPrice + " Euro.");
         }
     }
 }

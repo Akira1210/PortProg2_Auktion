@@ -16,11 +16,11 @@ public class Main {
 
     public static void main(String[] args) throws FileNotFoundException, NoSuchElementException, NumberFormatException {
 
-        // Create products
+        // Produkte werden eingelesen
         setProd();
 
         Scanner input = new Scanner(System.in);
-        System.out.println("Bitte geben Sie die Anzahl der Auktionatoren an:");
+        System.out.println("\nBitte geben Sie die Anzahl der Auktionatoren an:");
         try {
             numAuctioneers = input.nextInt();
             //numAuctions = numAuctioneers;
@@ -31,7 +31,7 @@ public class Main {
             HandleInputMismatchException(eA);
         }
 
-        System.out.println("Bitte geben Sie die Anzahl der Bieter an:");
+        System.out.println("\nBitte geben Sie die Anzahl der Bieter an:");
         try {
             numBidders = input.nextInt();
             if (numBidders < 1) {
@@ -41,17 +41,18 @@ public class Main {
             HandleInputMismatchException(eB);
         }
         input.close();
+        System.out.println("\n");
 
-        // Create a communicator
+        // Erstellung des Kommunikators
         Communicator communicator = new Communicator();
 
-        // Create an auction house
+        // Erstellung des Auktionshauses
         AuctionHouse auctionHouse = new AuctionHouse();
 
-        // Add Interests for Bidders to List
+        // Interessen für Bieter werden in eine Liste geladen
         Create.setListInterests();
 
-        // Create auctioneers
+        // Auktionatoren erstellen
         List<Auctioneers> auctioneers = new ArrayList<>();
         for (int i = 0; i < numAuctioneers; i++) {
             Auctioneers t = new Auctioneers(auctionHouse);
@@ -60,16 +61,17 @@ public class Main {
             auctioneers.add(t);
         }
 
-        // Create bidders
+        // Bieter erstellen
         List<Bidders> bidders = new ArrayList<>();
         for (int i = 0; i < numBidders; i++) {
             Bidders t = Create.createBidder();
             bidders.add(t);
         }
 
+        //Berechnung der Anazhl der nötigen Threads
         int numThreads = calculateNumThreads();
 
-        // Create ThreadPoolExecutor with custom settings
+        // Erstellung des ThreadPoolExecutor
         ThreadPoolExecutor executorService = new ThreadPoolExecutor(
                 numThreads, // corePoolSize
                 numThreads, // maximumPoolSize
@@ -78,13 +80,13 @@ public class Main {
                 new LinkedBlockingQueue<>() // workQueue
         );
 
-        // Start auction threads
+        // Start Auktionatoren Threads
         for (Auctioneers auctioneer : auctioneers) {
             executorService.submit(() -> auctioneer.startAuctions());
             
         }
 
-        // Wait for all Auctions to be added to AuctionList
+        // Warten, dass alle Auktionen in eine für die Bieter einsehbare Auktionsliste hinzugefügt wurden
         while (AllAuctionsAdded==false) {
             try {
                 Thread.sleep(100);
@@ -93,7 +95,7 @@ public class Main {
             }
         }
 
-        // Register Bidders to certain Auctions
+        // Bieter werden für bestimmte Auktionen registriert
         for (int i = 0; i < numBidders; i++) {
            final int index = i;
            synchronized (AuctionHouse.getAuctions()) {}
@@ -106,13 +108,24 @@ public class Main {
             executorService.submit(() -> bidders.get(index).run());
         }
 
-        // Wait for all threads to finish
+        // Warten auf ide Beendigung aller Threads
         executorService.shutdown();
         try {
             executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
+        //Wenn alle Auktionen beendet, wird EndReport ausgegeben
+        while (Thread.activeCount()!=1) {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        Reporter.writeAuctionInfo("Es wurden "+numAuctioneers+" Auktionen durchgeführt. Insgesamt haben "+numBidders+" Bieter an diesem Auktiontag teilgenommen.");
+        Reporter.printEndReport();
     }
     /**
      * Liest Produkte aus Products.txt aus
@@ -139,12 +152,12 @@ public class Main {
 
             }
         } catch (NoSuchElementException e) {
-            System.out.println("All Products added");
+            //System.out.println("All Products added");
             prodfile.close();
         }
     }
 
-    // Auctioneers randomly pick a product to sell
+    // Auktionatoren wählen zufällig Produkte zum Verkaufen
     private static Products prodToAuctioneer() {
         Random rand = new Random();
         boolean alreadyInAuction = false;
@@ -165,16 +178,13 @@ public class Main {
     }
 
     public static int calculateNumThreads() {
-        // Number of auctioneer threads
+        // Anzahl Auktionatoren Threads
         int numAuctioneerThreads = Math.max(numAuctioneers, 1);
 
-        // Maximum number of concurrent bids per bidder
-        int maxBidsPerBidder = 1; // Each bidder can bid in every auction
+        // Anzahl Bieter Threads
+        int numBidderThreads = Math.max(numBidders,1);
 
-        // Total number of bidder threads
-        int numBidderThreads = Math.max(numBidders * maxBidsPerBidder, 1);
-
-        // Total number of threads
+        // Insgesamte Anzahl der nötigen Threads
         return numAuctioneerThreads + numBidderThreads;
     }
 
