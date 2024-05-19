@@ -7,11 +7,11 @@ public class AuctionHouse {
     private static List<Auction> auctions;
 
     public AuctionHouse() {
-        auctions = new ArrayList<>();
+        auctions = new ArrayList<>();       //Liste aller Auktionen
     }
 
-    public synchronized void createAuction(Products product) {
-        Auction auction = new Auction(product);
+    public synchronized void createAuction(Products product, Communicator comm) {
+        Auction auction = new Auction(product, comm);
         Reporter.addProduct(product);
         auctions.add(auction);
         ExecutorService executor = Executors.newSingleThreadExecutor();

@@ -65,8 +65,9 @@ public class Bidders implements Runnable {
 
 
     public void registerForAuction(Auction auction) {
-        if (interestedInAuction(auction)) {
+        if (interestedInAuction(auction) & this.registeredAuctions.size()<1) {
             this.registeredAuctions.add(auction);
+            auction.getComm().registerBidder(this);
         }
     }
     private boolean interestedInAuction(Auction auction) {
@@ -90,9 +91,6 @@ public class Bidders implements Runnable {
 
     public void setIndex(int index) {
         this.index = index;
-    }
-    public void setCommunicator(Communicator communicator) {
-        this.communicator = communicator;
     }
 
     public Set<Auction> getRegisteredAuctions(){

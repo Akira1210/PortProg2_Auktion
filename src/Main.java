@@ -42,9 +42,6 @@ public class Main {
         input.close();
         System.out.println("\n");
 
-        // Erstellung des Kommunikators
-        Communicator communicator = new Communicator();
-
         // Erstellung des Auktionshauses
         AuctionHouse auctionHouse = new AuctionHouse();
 
@@ -55,7 +52,7 @@ public class Main {
         List<Auctioneers> auctioneers = new ArrayList<>();
         for (int i = 0; i < numAuctioneers; i++) {
             Auctioneers t = new Auctioneers(auctionHouse);
-            communicator.registerAuctioneer(t); // Register auctioneers
+            //Communicator.registerAuctioneer(t); // Register auctioneers
             t.registerProduct(prodToAuctioneer()); // Register products
             auctioneers.add(t);
         }
@@ -101,8 +98,8 @@ public class Main {
 
             for (Auction auction : AuctionHouse.getAuctions()) {
                 bidders.get(i).registerForAuction(auction);
+                //auction.getComm().registerBidder(bidders.get(i));
             }
-            bidders.get(i).setCommunicator(communicator);
             bidders.get(i).setIndex(i);
             executorService.submit(() -> bidders.get(index).run());
         }

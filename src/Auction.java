@@ -2,16 +2,18 @@ public class Auction implements Runnable {
     private Products product;
     private double currentPrice;
     private boolean auctionEnded;
-    private double winningBid;
+    //private double winningBid;
     private final Object lock = new Object();
+    private Communicator comm;
 
 
 
 
-    public Auction(Products product) {
+    public Auction(Products product, Communicator comm) {
         this.product = product;
         this.currentPrice = product.getStartingPrice();
         this.auctionEnded = false;
+        this.comm = comm;
 
     }
 
@@ -20,7 +22,7 @@ public class Auction implements Runnable {
             if (!auctionEnded && amount >= currentPrice) {
                 System.out.println("Bieter" + Thread.currentThread().getName() + " hat ein Gebot von " + amount + " Euro für " + Products.getItemName(product) + " abgegeben.");
                 currentPrice = amount;
-                winningBid = amount;
+                //winningBid = amount;
                 auctionEnded = true;
                 lock.notifyAll();
             }
@@ -56,11 +58,15 @@ public class Auction implements Runnable {
     public Products getProduct() {
         return product;
     }
-    public double getWinningBid() {
-        return winningBid;
-    }
+    // public double getWinningBid() {
+    //     return winningBid;
+    // }
 
     public boolean isRunning() {
         return !auctionEnded;
+    }
+
+    public Communicator getComm() {
+        return this.comm;
     }
 }
