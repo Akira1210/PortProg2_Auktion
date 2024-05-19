@@ -27,7 +27,7 @@ public class Create {
 
         public static Bidders createBidder(){
             Random rand = new Random();  // budget, aggressiveBehavior, interest
-            Bidders t = new Bidders(rand.nextInt(50, 30000), rand.nextInt(0,100), ListInterests.get(rand.nextInt(0,ListInterests.size()-1)));
+            Bidders t = new Bidders(rand.nextInt(50, 50000), rand.nextInt(0,100), ListInterests.get(rand.nextInt(0,ListInterests.size()-1)));
                 return t;
         }
     }

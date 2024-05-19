@@ -52,7 +52,6 @@ public class Main {
         List<Auctioneers> auctioneers = new ArrayList<>();
         for (int i = 0; i < numAuctioneers; i++) {
             Auctioneers t = new Auctioneers(auctionHouse);
-            //Communicator.registerAuctioneer(t); // Register auctioneers
             t.registerProduct(prodToAuctioneer()); // Register products
             auctioneers.add(t);
         }
@@ -98,7 +97,6 @@ public class Main {
 
             for (Auction auction : AuctionHouse.getAuctions()) {
                 bidders.get(i).registerForAuction(auction);
-                //auction.getComm().registerBidder(bidders.get(i));
             }
             bidders.get(i).setIndex(i);
             executorService.submit(() -> bidders.get(index).run());
@@ -120,7 +118,7 @@ public class Main {
                 e.printStackTrace();
             }
         }
-        Reporter.writeAuctionInfo("Es wurden "+numAuctioneers+" Auktionen durchgeführt. Insgesamt haben "+numBidders+" Bieter an diesem Auktiontag teilgenommen.");
+        Reporter.writeAuctionInfo();
         Reporter.printEndReport();
     }
     /**
@@ -186,6 +184,10 @@ public class Main {
     //GETTERS / SETTERS
     public static int getNumAuctioneers(){
         return numAuctioneers;
+    }
+
+    public static int getNumBidders(){
+        return numBidders;
     }
 
     public static void setAllAuctionsAdded(boolean allauctionsadded) {

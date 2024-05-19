@@ -7,7 +7,7 @@ public class Bidders implements Runnable {
     private double budget;
     private int aggressiveBehavior;
     private String interest;
-    private Communicator communicator;
+    private Communicator comm;
     private int index;
     private static final double DEFAULT_CHANCE = 0.5;
     private static final double INTERESTED_CHANCE_INCREMENT = 0.2;
@@ -27,7 +27,7 @@ public class Bidders implements Runnable {
             if (currentAuction == null || !currentAuction.isRunning()) {
                 break;
             }
-            double currentPrice = currentAuction.getCurrentPrice();
+            double currentPrice = comm.getCurrentPrice();
 
                 synchronized (currentAuction) {
                     if (!currentAuction.isAuctionEnded()) {
@@ -49,7 +49,8 @@ public class Bidders implements Runnable {
                         }
                         if (decision >= 800  & this.budget>=currentPrice) {
                             Reporter.addBoughtItems(currentAuction);
-                            currentAuction.bid(currentPrice);
+                            comm.toAucc(currentPrice, currentAuction);
+                            //currentAuction.bid(currentPrice);
 
                         }
                     }
@@ -67,7 +68,8 @@ public class Bidders implements Runnable {
     public void registerForAuction(Auction auction) {
         if (interestedInAuction(auction) & this.registeredAuctions.size()<1) {
             this.registeredAuctions.add(auction);
-            auction.getComm().registerBidder(this);
+            comm=auction.getComm();
+            comm.registerBidder(this);
         }
     }
     private boolean interestedInAuction(Auction auction) {
