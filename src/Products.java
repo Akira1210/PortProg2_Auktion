@@ -1,4 +1,4 @@
-// Product class
+// Produkt Klasse
 
 import java.util.ArrayList;
 
