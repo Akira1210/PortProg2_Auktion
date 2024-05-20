@@ -6,13 +6,13 @@ import java.util.concurrent.Executors;
 public class Auctioneers {
     private AuctionHouse auctionHouse;
     private List<Products> products;
-    private Communicator commAuc;
+    private Communicator comm;
 
     public Auctioneers(AuctionHouse auctionHouse) {
         this.auctionHouse = auctionHouse;
         this.products = new ArrayList<>();
-        this.commAuc = new Communicator();
-        this.commAuc.registerAuctioneer(this);
+        this.comm = new Communicator();
+        this.comm.registerAuctioneer(this);
     }
 
     public void registerProduct(Products product) {
@@ -22,7 +22,7 @@ public class Auctioneers {
         ExecutorService executor = Executors.newFixedThreadPool(products.size());
         for (Products product : this.products) {
 
-            executor.submit(() -> auctionHouse.createAuction(product,this.commAuc));
+            executor.submit(() -> auctionHouse.createAuction(product,this.comm));
         }
         executor.shutdown();
     }

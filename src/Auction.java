@@ -2,7 +2,6 @@ public class Auction implements Runnable {
     private Products product;
     private double currentPrice;
     private boolean auctionEnded;
-    //private double winningBid;
     private final Object lock = new Object();
     private Communicator comm;
 
@@ -19,10 +18,9 @@ public class Auction implements Runnable {
 
     public void bid(double amount) {
         //synchronized (lock) {
-            if (!auctionEnded && amount >= currentPrice) {
-                System.out.println("Bieter" + Thread.currentThread().getName() + " hat ein Gebot von " + amount + " Euro für " + Products.getItemName(product) + " abgegeben.");
+            if (!auctionEnded && amount >= currentPrice) {          //BieterNr: rechnet sich aus AuktionatorenThreads + Nr. von diesem BieterThread, deshalb (Nr. von diesem BieterThread - Anzahl Auktionatoren) = Tatsächliche Bieter Nr.  
+                System.out.println("Bieter " + (Integer.parseInt(Thread.currentThread().getName().replaceAll("pool-1-thread-", ""))-Main.getNumAuctioneers()) + " hat ein Gebot von " + amount + " Euro für " + Products.getItemName(product) + " abgegeben.");
                 currentPrice = amount;
-                //winningBid = amount;
                 auctionEnded = true;
                 lock.notifyAll();
             }
@@ -34,6 +32,7 @@ public class Auction implements Runnable {
         synchronized (lock) {
             while (!auctionEnded && currentPrice > product.getMinimalPrice()) {
                 currentPrice -= product.getDecrementPrice();
+                comm.toBidd(currentPrice); //new
                 System.out.println("Der aktuelle Preis für " + Products.getItemName(product) + " liegt bei: " + currentPrice + " Euro.");
                 try {
                     Thread.sleep(5000);
@@ -58,9 +57,6 @@ public class Auction implements Runnable {
     public Products getProduct() {
         return product;
     }
-    // public double getWinningBid() {
-    //     return winningBid;
-    // }
 
     public boolean isRunning() {
         return !auctionEnded;

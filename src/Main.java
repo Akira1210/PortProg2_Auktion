@@ -29,6 +29,12 @@ public class Main {
         } catch (InputMismatchException eA) {
             HandleInputMismatchException(eA);
         }
+        //Sicherstellellen, dass genug Produkte für die Auktionatoren zur Verfügung stehen
+        if (numAuctioneers>Products.getItemAmount()) {
+            System.out.println("Es stehen nicht genug Produkte für die Auktionatoren zur Verfügung");
+            numAuctioneers=Products.getItemAmount();    //Falls nicht, wird die Anzahl der Auktionatoren auf die Anzahl der Produkte reduziert
+            System.out.println("Die Anzahl der Auktionaoren wurde auf die Anzahl der Verfügbaren Produkte beschränkt ("+numAuctioneers+" Auktionatoren).");
+        }
 
         System.out.println("\nBitte geben Sie die Anzahl der Bieter an:");
         try {
@@ -52,7 +58,6 @@ public class Main {
         List<Auctioneers> auctioneers = new ArrayList<>();
         for (int i = 0; i < numAuctioneers; i++) {
             Auctioneers t = new Auctioneers(auctionHouse);
-            //Communicator.registerAuctioneer(t); // Register auctioneers
             t.registerProduct(prodToAuctioneer()); // Register products
             auctioneers.add(t);
         }
@@ -98,7 +103,6 @@ public class Main {
 
             for (Auction auction : AuctionHouse.getAuctions()) {
                 bidders.get(i).registerForAuction(auction);
-                //auction.getComm().registerBidder(bidders.get(i));
             }
             bidders.get(i).setIndex(i);
             executorService.submit(() -> bidders.get(index).run());
@@ -120,7 +124,7 @@ public class Main {
                 e.printStackTrace();
             }
         }
-        Reporter.writeAuctionInfo("Es wurden "+numAuctioneers+" Auktionen durchgeführt. Insgesamt haben "+numBidders+" Bieter an diesem Auktiontag teilgenommen.");
+        Reporter.writeAuctionInfo();
         Reporter.printEndReport();
     }
     /**
@@ -155,20 +159,26 @@ public class Main {
     // Auktionatoren wählen zufällig Produkte zum Verkaufen
     private static Products prodToAuctioneer() {
         Random rand = new Random();
-        boolean alreadyInAuction = false;
         Products prod = null;
-        int i = 0;
+        int i = -1;
+        int num =rand.nextInt(0, Products.getItemAmount() - 1); //Erstmal Zufallszahl, um zufälliges Produkte aus Liste zu erhalten
 
-        while (!alreadyInAuction) {
+        while (true) {
             i++;
-            prod = Products.getItem(rand.nextInt(0, Products.getItemAmount() - 1));
-            alreadyInAuction = prod.getInAuction();
-            if (i == Products.getItemAmount());
+            prod = Products.getItem(num);
+            if (!prod.getInAuction()) { //Überprüfen, dass Produkt nicht bereits in einer Auktion ist
+                Products.getItem(num).setInAuction(true);
+                return prod;
+            }
+            num = i; //Falls Zufallsprodukt bereits in einer Auktion ist, wird Produktliste von vrone bis hinten nach freien Produkten linear durchsucht
+            if (num == Products.getItemAmount()) //Falls alle Produkte in einer Auktion bereits zu finden sind (Eigentlich Unreachable Code, da nach Eingabe der Anzahl der AUktionaotren bereits sichergestellt wird, dass genug Produkte verfügbar sind)
             {
+                System.out.println("Auktionator konnte kein freies Produkt finden...");
                 break;
             }
+            
         }
-        return prod;
+        return null;
 
     }
 
@@ -186,6 +196,10 @@ public class Main {
     //GETTERS / SETTERS
     public static int getNumAuctioneers(){
         return numAuctioneers;
+    }
+
+    public static int getNumBidders(){
+        return numBidders;
     }
 
     public static void setAllAuctionsAdded(boolean allauctionsadded) {
