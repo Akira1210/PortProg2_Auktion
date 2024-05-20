@@ -22,7 +22,7 @@ public class Auction implements Runnable {
                 System.out.println("Bieter " + (Integer.parseInt(Thread.currentThread().getName().replaceAll("pool-1-thread-", ""))-Main.getNumAuctioneers()) + " hat ein Gebot von " + amount + " Euro für " + Products.getItemName(product) + " abgegeben.");
                 currentPrice = amount;
                 auctionEnded = true;
-                lock.notifyAll();
+                //lock.notifyAll();
             }
         //}
     }

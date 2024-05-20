@@ -206,14 +206,14 @@ public class Main {
         allAuctionsAdded = allauctionsadded;
     }
 
-    public static Auction getAuctionForBidder(Set<Auction> registeredAuctions) {
-        for (Auction regauction : registeredAuctions) {
+    public static Auction getAuctionForBidder(Auction regauction) {
+        //for (Auction regauction : registeredAuctions) {
             for (Auction plannedAuction : AuctionHouse.getAuctions()) {
-                if (plannedAuction.equals(regauction)) {
+                if (plannedAuction.equals(regauction)&plannedAuction.isRunning()) {
                     return plannedAuction;
                 }
             }
-        }
+        //}
         return null;
     }
 
