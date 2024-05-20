@@ -207,13 +207,11 @@ public class Main {
     }
 
     public static Auction getAuctionForBidder(Auction regauction) {
-        //for (Auction regauction : registeredAuctions) {
             for (Auction plannedAuction : AuctionHouse.getAuctions()) {
                 if (plannedAuction.equals(regauction)&plannedAuction.isRunning()) {
                     return plannedAuction;
                 }
             }
-        //}
         return null;
     }
 

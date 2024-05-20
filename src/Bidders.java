@@ -11,7 +11,6 @@ public class Bidders implements Runnable {
     private int index;
     private static final double DEFAULT_CHANCE = 0.5;
     private static final double INTERESTED_CHANCE_INCREMENT = 0.2;
-    //private Set<Auction> registeredAuctions = new HashSet<>();
     private Auction registeredAuction;
     private Set<Auction> AuctionsBacklog = new HashSet<>();
 
@@ -27,6 +26,8 @@ public class Bidders implements Runnable {
         while (true) {
             Auction currentAuction = Main.getAuctionForBidder(this.registeredAuction);
             if (currentAuction == null || !currentAuction.isRunning()) {
+                BackLogRegister();
+                if (registeredAuction==null)
                 break;
             }
             double currentPrice = comm.getCurrentPrice();
@@ -49,20 +50,12 @@ public class Bidders implements Runnable {
                         if (random.nextBoolean()) {
                             decision += 50;
                         }
-                        if (decision >= 1  & this.budget>=currentPrice) {
+                        if (decision >= 800  & this.budget>=currentPrice) {
                             Reporter.addBoughtItems(currentAuction);
                             comm.toAucc(currentPrice, currentAuction);
                             this.budget-=currentPrice;                      //Budget wird anhand des ausgebenen Geldes reduziert
-                            //System.out.println(currentPrice+ " ausgebenen, noch übrig: " + this.getBudget());
-                            //registeredAuctions.clear();                     //registeredAuctions leeren
                             registeredAuction=null;
-
-                            for (Auction auction : AuctionsBacklog) {       //Nächste Auktion wird aus dem Backlog geladen
-                                if (!auction.isAuctionEnded()) {
-                                    registerForAuction(auction);
-                                }
-                            }
-
+                            BackLogRegister();
                         }
                     }
             }
@@ -75,6 +68,15 @@ public class Bidders implements Runnable {
         }
     }
 
+    private void BackLogRegister() {
+        for (Auction auction : AuctionsBacklog) {       //Nächste Auktion wird aus dem Backlog geladen
+            if (!auction.isAuctionEnded()) {
+                registerForAuction(auction);
+            }
+            if (registeredAuction==null) {
+            }
+        }
+    }
 
     public void registerForAuction(Auction auction) {
         if (interestedInAuction(auction)) {
