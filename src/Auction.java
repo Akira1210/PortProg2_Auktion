@@ -17,14 +17,11 @@ public class Auction implements Runnable {
     }
 
     public void bid(double amount) {
-        //synchronized (lock) {
             if (!auctionEnded && amount >= currentPrice) {          //BieterNr: rechnet sich aus AuktionatorenThreads + Nr. von diesem BieterThread, deshalb (Nr. von diesem BieterThread - Anzahl Auktionatoren) = Tatsächliche Bieter Nr.  
                 System.out.println("Bieter " + (Integer.parseInt(Thread.currentThread().getName().replaceAll("pool-1-thread-", ""))-Main.getNumAuctioneers()) + " hat ein Gebot von " + amount + " Euro für " + Products.getItemName(product) + " abgegeben.");
                 currentPrice = amount;
                 auctionEnded = true;
-                //lock.notifyAll();
             }
-        //}
     }
 
     @Override

@@ -41,6 +41,7 @@ public class Tests {
         assertEquals(product.getMinimalPrice(), auction.getCurrentPrice());
         assertTrue(auction.isAuctionEnded());
     }
+    
     @Test
     public void testCreateAuction() {
         // Erstelle eine Auktion mit dem gegebenen Produkt

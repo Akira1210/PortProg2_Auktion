@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 import java.util.Random;
 /**
- * Klasse, die dynamisch Objekte nach vorherigen User-Input von außen aufgerufen erzeugt
+ * Klasse, die dynamisch Bieter nach vorherigen User-Input von außen aufgerufen erzeugt und ihnen Interessen für die Auktionen zuteilt
  */
 public class Create {
         public static ArrayList<String> ListInterests = new ArrayList<>();
