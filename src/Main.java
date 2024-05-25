@@ -126,6 +126,7 @@ public class Main {
         Reporter.writeAuctionInfo();
         Reporter.printEndReport();
     }
+
     /**
      * Liest Produkte aus Products.txt aus
      * @throws FileNotFoundException
@@ -133,7 +134,13 @@ public class Main {
      */
     private static void setProd() throws FileNotFoundException, NoSuchElementException {
         File file = new File("src/Products.txt");
-        Scanner prodfile = new Scanner(file);
+        Scanner prodfile = null;
+        try {
+        prodfile = new Scanner(file);
+        }
+        catch (FileNotFoundException e) {
+            FileNotFoundException(e);
+        }
 
         try {
             while (prodfile.hasNext()) {
@@ -144,15 +151,21 @@ public class Main {
                 String step = prodfile.next();  // Preisschritte
                 String end = prodfile.next();   // Mindestpreis
                                                 // Produkte werden mit '-' voneinander getrennt
-                Products t = new Products(name, type, Double.parseDouble(price), Integer.parseInt(step),
+                try {Products t = new Products(name, type, Double.parseDouble(price), Integer.parseInt(step),
                         Double.parseDouble(end));
+                }
+                catch (Exception e){
+                    ProductIllegalArgument(e);
+                }
 
                 prodfile.nextLine();
 
             }
-        } catch (NoSuchElementException e) {
+        } 
+        catch (NoSuchElementException e) {
             prodfile.close(); //Alle Produkte wurden eingelesen
         }
+
     }
 
     // Auktionatoren wählen zufällig Produkte zum Verkaufen
@@ -217,12 +230,22 @@ public class Main {
 
     //EXCEPTION HANDELING
     private static void HandleInputMismatchException(InputMismatchException e) {
-        System.out.println(e + ": Eingabe muss eine Ganzzahl sein");
+        System.out.println(e + ": Die Eingabe muss eine Ganzzahl sein. Programm wird beendet");
         System.exit(-1);
     }
 
     private static void NumberFormatException() {
-        System.out.println("Eingabe muss eine positive Ganzzahl sein");
+        System.out.println("Die Eingabe muss eine positive Ganzzahl größer 0 sein. Programm wird beendet");
+        System.exit(-1);
+    }
+
+    private static void FileNotFoundException(FileNotFoundException e) {
+        System.out.println(e+": Die Datei 'Products.txt' konnte nicht gefunden werden. Es können keine Produkte geladen werden. Programm wird beendet.");
+        System.exit(-1);
+    }
+
+    private static void ProductIllegalArgument(Exception e){
+        System.out.println(e+" Der Produkterstellung wurde ein ungültiges Argument übergeben. Eventuell ist die 'Products.txt' beschädigt. Programm wird beendet.");
         System.exit(-1);
     }
 
