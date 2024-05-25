@@ -98,12 +98,10 @@ public class Main {
         // Bieter werden für bestimmte Auktionen registriert
         for (int i = 0; i < numBidders; i++) {
            final int index = i;
-           synchronized (AuctionHouse.getAuctions()) {}
 
             for (Auction auction : AuctionHouse.getAuctions()) {
                 bidders.get(i).registerForAuction(auction);
             }
-            bidders.get(i).setIndex(i);
             executorService.submit(() -> bidders.get(index).run());
         }
 

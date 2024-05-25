@@ -8,7 +8,6 @@ public class Bidders implements Runnable {
     private int aggressiveBehavior;
     private String interest;
     private Communicator comm;
-    private int index;
     private static final double DEFAULT_CHANCE = 0.5;
     private static final double INTERESTED_CHANCE_INCREMENT = 0.2;
     private Auction registeredAuction;
@@ -104,15 +103,15 @@ public class Bidders implements Runnable {
 
 
     public double getBudget() {
-        return budget;
-    }
-
-    public void setIndex(int index) {
-        this.index = index;
+        return this.budget;
     }
 
     public Auction getRegisteredAuction(){
         return this.registeredAuction;
+    }
+
+    public Communicator getComm(){
+        return this.comm;
     }
 
 }
