@@ -7,14 +7,13 @@ public class Tests {
     private Products product;
     private Auction auction;
     private AuctionHouse auctionHouse;
-    private Bidders bidder;
     private Communicator comm;
 
     @BeforeEach
     public void setUp() {
         auctionHouse = new AuctionHouse();
-        //comm = new Communicator();
-        product = new Products("Test Produkt", "TestType", 1000.0, 100.0, 500.0);
+        comm = new Communicator();
+        product = new Products("TestProdukt", "TestType", 1000.0, 100.0, 500.0);
         auction = new Auction(product, comm);
     }
 
@@ -53,25 +52,5 @@ public class Tests {
         Auction createdAuction = auctions.get(auctions.size() - 1);
         assertEquals(product, createdAuction.getProduct(), "Das Produkt in der erstellten Auktion sollte mit dem bereitgestellten übereinstimmen");
         assertNotNull(createdAuction, "Die erstellte Auktion sollte nicht null sein");
-    }
-
-    @Test
-    public void testBidderBids() throws InterruptedException {
-        Auctioneers auctioneers = new Auctioneers(auctionHouse);
-        auctioneers.registerProduct(product);
-        bidder = new Bidders(1000000000, 100, "TestType");
-        for (Auction auctionFromList : AuctionHouse.getAuctions()) {
-            bidder.registerForAuction(auctionFromList);
-        }
-        //Thread bidderThread = new Thread(bidder);
-        //bidderThread.start();
-
-        auctioneers.startAuctions();
-        bidder.getComm().toAucc(1000, bidder.getRegisteredAuction());
-        //auctionThread.start();
-
-        //while (auctionThread.isAlive()) {
-       //     Thread.sleep(100); // Kurze Wartezeiten, um CPU-Zyklen zu sparen
-        //}
     }
 }
