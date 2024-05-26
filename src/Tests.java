@@ -2,7 +2,9 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.util.List;
-
+/**
+ * Klasse, die Tests für verschiedene Szenarien bereitstellt
+ */
 public class Tests {
     private Products product;
     private Auction auction;
@@ -10,6 +12,9 @@ public class Tests {
     private Communicator comm;
 
     @BeforeEach
+    /**
+     * Wird vor jedem Test ausgeführt
+     */
     public void setUp() {
         auctionHouse = new AuctionHouse();
         comm = new Communicator();

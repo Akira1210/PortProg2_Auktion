@@ -2,6 +2,8 @@ import java.util.ArrayList;
 import java.util.List;
 /**
  * Klasse für die Kommunikation zwischen Bietern und Auktionatoren. Bieter bekommen nur Information von dem Auktionator, für dessen Auktion sie auch registriert sind. Bieter können auch nur diesem Auktionator Informationen senden.
+ * Enthält Liste der Bieter, Variable des Auktionators und den aktuellen Preis
+ * Jede Auktion erhält einen festen Kommunikator
  */
 
 public class Communicator {
