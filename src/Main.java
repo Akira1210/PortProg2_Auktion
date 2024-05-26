@@ -6,29 +6,33 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Random;
 import java.util.Scanner;
-import java.util.Set;
 import java.util.concurrent.*;
 
+/**
+ * Entry Point Klasse, die alle nötigen Objekte initialisiert und Grundbausteine für die Anwendung bereitstellt
+ */
 public class Main {
-    private static int numAuctioneers;
-    private static int numBidders;
-    private static boolean allAuctionsAdded=false;
+    private static int numAuctioneers;                  //Anzahl der Auktionatoren
+    private static int numBidders;                      //Anzahl der Bieter
+    private static boolean allAuctionsAdded=false;      //Boolean, ob alle Auktionen erstellt wurde und die Anwendung fortgesetzt werden kann
 
     public static void main(String[] args) throws FileNotFoundException, NoSuchElementException, NumberFormatException {
 
-        // Produkte werden eingelesen
-        setProd();
+        setProd();  // Produkte werden eingelesen
 
-        Scanner input = new Scanner(System.in);
+        Scanner input = new Scanner(System.in);     //Scanner Objekt, um Nutzereingaben zu ermöglichen
+
+        //Eingabe der Auktionatoren-Anzahl
         System.out.println("\nBitte geben Sie die Anzahl der Auktionatoren an:");
         try {
-            numAuctioneers = input.nextInt();
-            if (numAuctioneers < 1) {
+            numAuctioneers = input.nextInt();   //Überprüft, ob Eingabe eine Zahl ist, sonst HandleInputMismatchException unten
+            if (numAuctioneers < 1) {           //Überprüft, ob die Eingabe größer Eins ist
                 NumberFormatException();
             }
         } catch (InputMismatchException eA) {
-            HandleInputMismatchException(eA);
+            HandleInputMismatchException(eA);   //Wird aufgerufen, wenn Eingabe keine Zahl war
         }
+        
         //Sicherstellellen, dass genug Produkte für die Auktionatoren zur Verfügung stehen
         if (numAuctioneers>Products.getItemAmount()) {
             System.out.println("Es stehen nicht genug Produkte für die Auktionatoren zur Verfügung");
@@ -36,17 +40,21 @@ public class Main {
             System.out.println("Die Anzahl der Auktionaoren wurde auf die Anzahl der Verfügbaren Produkte beschränkt ("+numAuctioneers+" Auktionatoren).");
         }
 
+        //Eingabe der Bieter-Anzahl
         System.out.println("\nBitte geben Sie die Anzahl der Bieter an:");
         try {
-            numBidders = input.nextInt();
-            if (numBidders < 1) {
-                NumberFormatException();
+            numBidders = input.nextInt();       //Überprüft, ob Eingabe eine Zahl ist, sonst HandleInputMismatchException unten
+            if (numBidders < 1) {               //Überprüft, ob die Eingabe größer Eins ist     
+                NumberFormatException();        
             }
         } catch (InputMismatchException eB) {
-            HandleInputMismatchException(eB);
+            HandleInputMismatchException(eB);   //Wird aufgerufen, wenn Eingabe keine Zahl war
         }
-        input.close();
+
+        input.close();  //Schließt Scanner Objekt, da keine Nutzereingaben mehr erforderlich sind
+
         System.out.println("\n");
+
 
         // Erstellung des Auktionshauses
         AuctionHouse auctionHouse = new AuctionHouse();
@@ -58,7 +66,7 @@ public class Main {
         List<Auctioneers> auctioneers = new ArrayList<>();
         for (int i = 0; i < numAuctioneers; i++) {
             Auctioneers t = new Auctioneers(auctionHouse);
-            t.registerProduct(prodToAuctioneer()); // Register products
+            t.registerProduct(prodToAuctioneer()); // Produkte registrieren
             auctioneers.add(t);
         }
 
@@ -69,16 +77,16 @@ public class Main {
             bidders.add(t);
         }
 
-        //Berechnung der Anazhl der nötigen Threads
+        //Berechnung der Anzahl der nötigen Threads
         int numThreads = calculateNumThreads();
 
         // Erstellung des ThreadPoolExecutor
         ThreadPoolExecutor executorService = new ThreadPoolExecutor(
-                numThreads, // corePoolSize
-                numThreads, // maximumPoolSize
-                100L, // keepAliveTime
-                TimeUnit.MILLISECONDS, // unit
-                new LinkedBlockingQueue<>() // workQueue
+                numThreads,                     // corePoolSize
+                numThreads,                     // maximumPoolSize
+                100L,             // keepAliveTime
+                TimeUnit.MILLISECONDS,          // unit
+                new LinkedBlockingQueue<>()     // workQueue
         );
 
         // Start Auktionatoren Threads
@@ -99,13 +107,11 @@ public class Main {
         // Bieter werden für bestimmte Auktionen registriert
         for (int i = 0; i < numBidders; i++) {
            final int index = i;
-           synchronized (AuctionHouse.getAuctions()) {}
 
             for (Auction auction : AuctionHouse.getAuctions()) {
                 bidders.get(i).registerForAuction(auction);
             }
-            bidders.get(i).setIndex(i);
-            executorService.submit(() -> bidders.get(index).run());
+            executorService.submit(() -> bidders.get(index).run()); //Startet Bieter-Threads
         }
 
         // Warten auf die Beendigung aller Threads
@@ -127,14 +133,21 @@ public class Main {
         Reporter.writeAuctionInfo();
         Reporter.printEndReport();
     }
+
     /**
      * Liest Produkte aus Products.txt aus
-     * @throws FileNotFoundException
-     * @throws NoSuchElementException
+     * @throws FileNotFoundException    Wird geworfen, wenn Products.txt nicht gefunden wird
+     * @throws NoSuchElementException   Wird geworfen, wenn alle Produkte eingelsen wurden (Nächste Zeile in txt existiert nicht). Programm wird fortgesetzt
      */
     private static void setProd() throws FileNotFoundException, NoSuchElementException {
         File file = new File("src/Products.txt");
-        Scanner prodfile = new Scanner(file);
+        Scanner prodfile = null;
+        try {
+        prodfile = new Scanner(file);
+        }
+        catch (FileNotFoundException e) {
+            FileNotFoundException(e);
+        }
 
         try {
             while (prodfile.hasNext()) {
@@ -145,15 +158,21 @@ public class Main {
                 String step = prodfile.next();  // Preisschritte
                 String end = prodfile.next();   // Mindestpreis
                                                 // Produkte werden mit '-' voneinander getrennt
-                Products t = new Products(name, type, Double.parseDouble(price), Integer.parseInt(step),
-                        Double.parseDouble(end));
+                try {Products t = new Products(name, type, Double.parseDouble(price), Integer.parseInt(step),
+                        Double.parseDouble(end));   //Erstellt Produkt Objekt
+                }
+                catch (Exception e){
+                    ProductIllegalArgument(e);  //Wird geworfen, wenn Produkt Konstruktor ungültiges Argument erhält, weist auf eine falsche Formattierung der txt hin
+                }
 
                 prodfile.nextLine();
 
             }
-        } catch (NoSuchElementException e) {
+        } 
+        catch (NoSuchElementException e) {
             prodfile.close(); //Alle Produkte wurden eingelesen
         }
+
     }
 
     // Auktionatoren wählen zufällig Produkte zum Verkaufen
@@ -170,8 +189,8 @@ public class Main {
                 Products.getItem(num).setInAuction(true);
                 return prod;
             }
-            num = i; //Falls Zufallsprodukt bereits in einer Auktion ist, wird Produktliste von vrone bis hinten nach freien Produkten linear durchsucht
-            if (num == Products.getItemAmount()) //Falls alle Produkte in einer Auktion bereits zu finden sind (Eigentlich Unreachable Code, da nach Eingabe der Anzahl der AUktionaotren bereits sichergestellt wird, dass genug Produkte verfügbar sind)
+            num = i; //Falls Zufallsprodukt bereits in einer Auktion ist, wird Produktliste von vorne bis hinten nach freien Produkten linear durchsucht
+            if (num == Products.getItemAmount()) //Falls alle Produkte in einer Auktion bereits zu finden sind (Eigentlich Unreachable Code, da nach Eingabe der Anzahl der Auktionaotren bereits sichergestellt wird, dass genug Produkte verfügbar sind)
             {
                 System.out.println("Auktionator konnte kein freies Produkt finden...");
                 break;
@@ -206,26 +225,34 @@ public class Main {
         allAuctionsAdded = allauctionsadded;
     }
 
-    public static Auction getAuctionForBidder(Set<Auction> registeredAuctions) {
-        for (Auction regauction : registeredAuctions) {
+    public static Auction getAuctionForBidder(Auction regauction) {
             for (Auction plannedAuction : AuctionHouse.getAuctions()) {
-                if (plannedAuction.equals(regauction)) {
+                if (plannedAuction.equals(regauction)&plannedAuction.isRunning()) {
                     return plannedAuction;
                 }
             }
-        }
         return null;
     }
 
 
     //EXCEPTION HANDELING
     private static void HandleInputMismatchException(InputMismatchException e) {
-        System.out.println(e + ": Eingabe muss eine Ganzzahl sein");
+        System.out.println(e + ": Die Eingabe muss eine Ganzzahl sein. Programm wird beendet");
         System.exit(-1);
     }
 
     private static void NumberFormatException() {
-        System.out.println("Eingabe muss eine positive Ganzzahl sein");
+        System.out.println("Die Eingabe muss eine positive Ganzzahl größer 0 sein. Programm wird beendet");
+        System.exit(-1);
+    }
+
+    private static void FileNotFoundException(FileNotFoundException e) {
+        System.out.println(e+": Die Datei 'Products.txt' konnte nicht gefunden werden. Es können keine Produkte geladen werden. Programm wird beendet.");
+        System.exit(-1);
+    }
+
+    private static void ProductIllegalArgument(Exception e){
+        System.out.println(e+" Der Produkterstellung wurde ein ungültiges Argument übergeben. Eventuell ist die 'Products.txt' beschädigt. Programm wird beendet.");
         System.exit(-1);
     }
 

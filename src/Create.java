@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 import java.util.Random;
 /**
- * Klasse, die dynamisch Objekte nach vorherigen User-Input von außen aufgerufen erzeugt
+ * Klasse, die dynamisch Bieter nach vorherigen User-Input von außen aufgerufen erzeugt und ihnen Interessen für die Auktionen zuteilt
  */
 public class Create {
         public static ArrayList<String> ListInterests = new ArrayList<>();
@@ -25,10 +25,17 @@ public class Create {
             ListInterests.add("None");
         }
 
+        /**
+         * Erstellt Bieter Objekte, mit Budget, Aggressivität und Interesse
+         * Budget zufällig zwischen 50 und 30000 Euro
+         * Aggressivität zufällig zwischen 0 und 100
+         * Interesse zufällig aus obigen Liste
+         * @return Bieter Objekt
+         */
         public static Bidders createBidder(){
             Random rand = new Random();  // budget, aggressiveBehavior, interest
-            Bidders t = new Bidders(rand.nextInt(50, 50000), rand.nextInt(0,100), ListInterests.get(rand.nextInt(0,ListInterests.size()-1)));
-                return t;
+            Bidders bidder = new Bidders(rand.nextInt(50, 30000), rand.nextInt(0,100), ListInterests.get(rand.nextInt(0,ListInterests.size()-1)));
+                return bidder;
         }
     }
     

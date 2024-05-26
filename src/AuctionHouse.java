@@ -3,6 +3,10 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * Klasse, die Auktionshäuser als Objekte definiert
+ * Erstellung erfolgt ohne Argumente bzw. mit leerem Konstruktor
+ */
 public class AuctionHouse {
     private static List<Auction> auctions;
 
@@ -10,7 +14,12 @@ public class AuctionHouse {
         auctions = new ArrayList<>();       //Liste aller Auktionen
     }
 
-    public synchronized void createAuction(Products product, Communicator comm) {
+    /**
+     * Erstellt Auction Objekte
+     * @param product   Produkt für die Auktion
+     * @param comm      Kommunikator für diese Auktion
+     */
+    public void createAuction(Products product, Communicator comm) {
         Auction auction = new Auction(product, comm);
         Reporter.addProduct(product);
         auctions.add(auction);
@@ -22,11 +31,17 @@ public class AuctionHouse {
         }
     }
 
-    public synchronized void endAuction(Auction auction) {
+    /**
+     * Beendet angegebene Auktion
+     * @param auction
+     */
+    public void endAuction(Auction auction) {
         auctions.remove(auction);
     }
 
-    public static synchronized List<Auction> getAuctions() {
+    // GETTERS
+
+    public static List<Auction> getAuctions() {
         return auctions;
     }
 }

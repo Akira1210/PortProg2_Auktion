@@ -1,19 +1,34 @@
 import java.util.ArrayList;
 
+/**
+ * Klasse, die den Schlussbericht erstellt. Reporter schreibt während der Auktion mit
+ * Enthält Liste der Produkte die zu verkauf stehen, Liste der Produkte die verkauft wurden und Informationen zu den AUktionen
+ */
 public class Reporter {
     private static ArrayList<String> ItemsOnSale = new ArrayList<>();          //Auflistung der Waren, die zur Auktion stehen
     private static ArrayList<Auction> BoughtItems = new ArrayList<>();         //Auflistung der Waren, die verkauft wurden
     private static String AuctionInfo = "";                                    //Auktionsinfos, wie Anzahl der Auktionen, Auktionatoren und Bietern
     private static String AuctionStatistics = "";                              //Endergebnis hinsichtlich Umsatzes, Provision und Anzahl verkaufter Produkte
 
+    /**
+     * Produkt wird der Liste aller Produkte hinzugefügt
+     * @param product
+     */
     public static void addProduct(Products product) {
         ItemsOnSale.add(Products.getItemName(product));
     }
 
+    /**
+     * Produkt wird der Liste der verkauften Produkte hinzugefügt
+     * @param product
+     */
     public static void addBoughtItems(Auction product) {
         BoughtItems.add(product);
     }
 
+    /**
+     * Auktionsinfo werden zu einem leserlichem String zusammengefasst
+     */
     public static void writeAuctionInfo() {
         if (Main.getNumAuctioneers()<2) {
             AuctionInfo="Es wurde eine Auktion durchgeführt. Insgesamt ";
@@ -30,6 +45,10 @@ public class Reporter {
         AuctionInfo+=" Bieter an diesem Auktiontag teilgenommen.";
     }
 
+    /**
+     * Berechnungen für verschiedene für die Auktionen relevanter Zahlen
+     * Zusammenfassung in einem leserlichem String
+     */
     public static void calcAuctionInfo(){
         double profit=0;
         String auc ="";
@@ -61,6 +80,10 @@ public class Reporter {
         }
     }
 
+    /**
+     * Wird als letztes von der ANwendung aufgerufen
+     * Gibt alle in dieser Klasse zusammengesammelte Informationen aus
+     */
     public static void printEndReport(){
         calcAuctionInfo();
         System.out.println("\nAlle Auktionen wurden beendet.");
