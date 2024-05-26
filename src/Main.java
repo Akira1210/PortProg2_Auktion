@@ -68,7 +68,7 @@ public class Main {
             bidders.add(t);
         }
 
-        //Berechnung der Anazhl der nötigen Threads
+        //Berechnung der Anzahl der nötigen Threads
         int numThreads = calculateNumThreads();
 
         // Erstellung des ThreadPoolExecutor

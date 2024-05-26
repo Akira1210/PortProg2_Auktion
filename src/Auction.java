@@ -2,7 +2,6 @@ public class Auction implements Runnable {
     private Products product;
     private double currentPrice;
     private boolean auctionEnded;
-    private final Object lock = new Object();
     private Communicator comm;
 
 
@@ -17,8 +16,10 @@ public class Auction implements Runnable {
     }
 
     public void bid(double amount) {
-            if (!auctionEnded && amount >= currentPrice) {          //BieterNr: rechnet sich aus AuktionatorenThreads + Nr. von diesem BieterThread, deshalb (Nr. von diesem BieterThread - Anzahl Auktionatoren) = Tatsächliche Bieter Nr.  
-                System.out.println("Bieter " + (Integer.parseInt(Thread.currentThread().getName().replaceAll("pool-1-thread-", ""))-Main.getNumAuctioneers()) + " hat ein Gebot von " + amount + " Euro für " + Products.getItemName(product) + " abgegeben.");
+            if (!auctionEnded && amount >= currentPrice) {          //BieterNr: rechnet sich aus AuktionatorenThreads + Nr. von diesem 
+                                                                    //BieterThread, deshalb (Nr. von diesem BieterThread - Anzahl Auktionatoren) = Tatsächliche Bieter Nr.  
+                System.out.println("Bieter " + (Integer.parseInt(Thread.currentThread().getName().replaceAll("pool-1-thread-", ""))-Main.getNumAuctioneers()) 
+                + " hat ein Gebot von " + amount + " Euro für " + Products.getItemName(product) + " abgegeben.");
                 currentPrice = amount;
                 auctionEnded = true;
             }
@@ -26,7 +27,6 @@ public class Auction implements Runnable {
 
     @Override
     public void run() {
-        synchronized (lock) {
             while (!auctionEnded && currentPrice > product.getMinimalPrice()) {
                 currentPrice -= product.getDecrementPrice();
                 comm.toBidd(currentPrice); //new
@@ -40,7 +40,6 @@ public class Auction implements Runnable {
             if (currentPrice <= product.getMinimalPrice()) {
                 auctionEnded = true;
                 System.out.println("Auktion beendet. Der Mindestpreis für " + Products.getItemName(product) + " von: " + product.getMinimalPrice() + " Euro wurde erreicht.");
-            }
         }
     }
 

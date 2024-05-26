@@ -57,7 +57,7 @@ public class Bidders implements Runnable {
                             BackLogRegister();
                         }
                     }
-            }
+                }
 
             try {
                 TimeUnit.MILLISECONDS.sleep(random.nextInt(1000,2000));
