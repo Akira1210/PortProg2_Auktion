@@ -49,7 +49,7 @@ public class Bidders implements Runnable {
                         if (random.nextBoolean()) {
                             decision += 50;
                         }
-                        if (decision >= 800  & this.budget>=currentPrice) {
+                        if (decision >= 1  & this.budget>=currentPrice) {
                             Reporter.addBoughtItems(currentAuction);
                             comm.toAucc(currentPrice, currentAuction);
                             this.budget-=currentPrice;                      //Budget wird anhand des ausgebenen Geldes reduziert

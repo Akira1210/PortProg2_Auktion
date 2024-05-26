@@ -10,7 +10,7 @@ public class AuctionHouse {
         auctions = new ArrayList<>();       //Liste aller Auktionen
     }
 
-    public synchronized void createAuction(Products product, Communicator comm) {
+    public void createAuction(Products product, Communicator comm) {
         Auction auction = new Auction(product, comm);
         Reporter.addProduct(product);
         auctions.add(auction);
@@ -22,11 +22,11 @@ public class AuctionHouse {
         }
     }
 
-    public synchronized void endAuction(Auction auction) {
+    public void endAuction(Auction auction) {
         auctions.remove(auction);
     }
 
-    public static synchronized List<Auction> getAuctions() {
+    public static List<Auction> getAuctions() {
         return auctions;
     }
 }
